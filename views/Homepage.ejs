@@ -181,7 +181,7 @@
       <span class="category-name">Tubers & Grains</span>
     </a>
     <a href="/products/categories/fruits" class="category-item">
-      <span class="category-icon">&#127823;</span>
+      <span class="category-icon"></span>
       <span class="category-name">Fruits</span>
     </a>
     <a href="/products/categories/fish meat" class="category-item">
@@ -245,8 +245,8 @@
             <img src="<%= product.imageUrl %>" alt="<%= product.name %>" class="card-img-top">
             <div class="card-body">
               <p class="card-title mb-1" style="font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><%= product.name %></p>
-              <p class="card-text mb-2" style="color: #FE9801;">From $<%= product.price %></p>
-              <form action="/cart/<%= product._id %>" method="post">
+              <p class="card-text mb-2" style="color: #FE9801;">From ₦<%= product.price %></p>
+              <form action="/products/<%= product._id %>" method="get">
                 <button type="submit" class="btn btn-green w-100" style="background-color: #2D7B30; color: white;">
                   Add to Cart
                 </button>
@@ -275,7 +275,7 @@
                                 <img src="<%= product.imageUrl %>" class="img-fluid rounded-circle w-100" alt="<%= product.name %>">
                             </div>
                             <div class="col-6">
-                                <a href="#" class="h5"><%= product.name %></a>
+                                <a href="/products/:<%=product.product_id%>" class="h5"><%= product.name %></a>
                                 <div class="d-flex my-3">
                                     <i class="fas fa-star text-primary"></i>
                                     <i class="fas fa-star text-primary"></i>
@@ -283,7 +283,7 @@
                                     <i class="fas fa-star text-primary"></i>
                                     <i class="fas fa-star"></i>
                                 </div>
-                                <h4 class="mb-3"><%= product.price %> &#8358;</h4>
+                                <h4 class="mb-3"> ₦<%= product.price %></h4>
                         
                                 <a href="/products/<%= product._id %>" class="btn border border-secondary rounded-pill px-3 text-primary">
                                     <i style="color:white" class="fa fa-shopping-bag me-2 text-primary"></i> view detais
