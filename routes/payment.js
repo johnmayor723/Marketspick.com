@@ -15,7 +15,49 @@ const transporter = nodemailer.createTransport({
 });
 
 // Payment page route
-router.post("/", (req, res, next) => {
+
+router.post("/", async (req, res, next) => {
+  const amount = req.body.amount;
+
+  if (!req.session.cart) {
+    return res.render("cart", { cart: [], title: "Shopping Cart" });
+  }
+
+  try {
+    // Get the user ID from the session
+    const userId = req.session.currentuser;
+
+    // Check if the user is authenticated
+    if (!userId) {
+      return res.status(401).render("login", { title: "Login Page", message: "Please log in to proceed to checkout." });
+    }
+
+    // Make the Axios call to validate coupon
+    const { data } = await axios.post("http://api.fooddeckpro.com.ng/api/coupon/validate-coupon", {
+      userId,
+    });
+
+    const couponValue = data.remainingValue || 0; // Get coupon value, default to 0 if none is returned
+
+    // Render the checkout page with the coupon value
+    res.render("checkout", {
+      amount,
+      couponValue,
+      title: "Payment Page",
+    });
+  } catch (error) {
+    console.error("Error validating coupon:", error.message);
+
+    // If an error occurs, render the checkout page without a coupon value
+    res.render("checkout", {
+      amount,
+      couponValue: 0, // Default coupon value to 0 in case of error
+      title: "Payment Page",
+      error_msg: "Unable to validate coupon. Please try again later.",
+    });
+  }
+});
+/*router.post("/", (req, res, next) => {
   const amount = req.body.amount;
   if (!req.session.cart) {
     return res.render("cart", { cart, title: "Shopping Cart" });
@@ -25,7 +67,7 @@ router.post("/", (req, res, next) => {
     amount,
     title: "Payment Page",
   });
-});
+});*/
 
 // Callback route
 router.get("/callback", async (req, res) => {
