@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 const { generateOrderEmailHTML } = require("../helpers");
 
 const PAYSTACK_SECRET_KEY = "sk_test_d754fb2a648e8d822b09aa425d13fc62059ca08e";
-const API_BASE_URL = "http://api.fooddeckpro.com.ng";
+const API_BASE_URL = "https://api-mp-fl.onrender.com";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -18,14 +18,15 @@ const transporter = nodemailer.createTransport({
 
 router.post("/", async (req, res, next) => {
   const amount = req.body.amount;
+  console.log("here now:", req.session.currentUser)
 
-  if (!req.session.cart) {
-    return res.render("cart", { cart: [], title: "Shopping Cart" });
+  if (!req.session.currentUser && req.session.cart) {
+    return res.render("hompage", { cart: [], title: "Homepage" });
   }
 
   try {
     // Get the user ID from the session
-    const userId = req.session.currentuser;
+    const userId = req.session.currentuser.userId;
 
     // Check if the user is authenticated
     if (!userId) {
@@ -33,7 +34,7 @@ router.post("/", async (req, res, next) => {
     }
 
     // Make the Axios call to validate coupon
-    const { data } = await axios.post("http://api.fooddeckpro.com.ng/api/coupon/validate-coupon", {
+    const { data } = await axios.post("https://api-mp-fl.onrender.com/api/coupon/validate-coupon", {
       userId,
     });
 
@@ -57,18 +58,20 @@ router.post("/", async (req, res, next) => {
     });
   }
 });
-/*router.post("/", (req, res, next) => {
+/*
+router.post("/", (req, res, next) => {
   const amount = req.body.amount;
   if (!req.session.cart) {
     return res.render("cart", { cart, title: "Shopping Cart" });
   }
 
-  res.render("checkout", {
-    amount,
+  res.render("checkout",{
+      amount ,
+      couponValue : 20000,
     title: "Payment Page",
   });
-});*/
-
+});
+*/
 // Callback route
 router.get("/callback", async (req, res) => {
   try {

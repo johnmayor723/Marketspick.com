@@ -1,0 +1,101 @@
+* {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .con {
+      font-family: Arial, sans-serif;
+      background-color: #f8f8f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+
+    .profile-container {
+      width: 100%;
+      max-width: 1200px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 20px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 768px) {
+      .profile-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .profile-section {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      padding: 20px;
+    }
+
+    .profile-image {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .profile-image img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      border: 4px solid #FE9801;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-info {
+      list-style: none;
+      padding: 0;
+      color: #333;
+    }
+
+    .user-info li {
+      padding: 10px;
+      font-size: 16px;
+      background: #f0f0f0;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-info li:nth-child(even) {
+      background: #e8e8e8;
+    }
+
+    .transaction-list, .wishlist {
+      list-style: none;
+      padding: 0;
+      color: #333;
+    }
+
+    .transaction-list li, .wishlist li {
+      padding: 10px;
+      font-size: 14px;
+      background: #f0f0f0;
+      border-radius: 5px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .transaction-list li:nth-child(even),
+    .wishlist li:nth-child(even) {
+      background: #e8e8e8;
+    }
+
+    .wishlist img {
+      width: 50px;
+      height: 50px;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .wishlist-item {
+      display: flex;
+      align-items: center;
+    }

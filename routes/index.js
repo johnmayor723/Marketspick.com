@@ -11,7 +11,10 @@ const nodemailer = require('nodemailer');
       },
 });
 
+
 const API_URL = "http://api.fooddeckpro.com.ng/api/products";
+
+const AUTH_API_URL = "http://api.fooddeckpro.com.ng/api/auth";
 
 // Homepage route
 router.get("/", async (req, res) => {
@@ -25,6 +28,71 @@ router.get("/", async (req, res) => {
     res.status(500).send("Error loading products");
   }
 });
+
+// Auth routes
+
+router.get("/profile", function(req, res){
+    res.render("profile", {title: "Profile Page"})
+})
+router.get("/login", function(req, res){
+    res.render("login",  {title: "Login Page"})
+})
+router.get("/register", function(req, res){
+    res.render("register", {title: "Signup Page"})
+})
+
+router.get("/logout", function(req, res){
+    req.session.currentUser = null
+    res.redirect("/")
+})
+
+
+
+// Register route
+router.post("/register", async (req, res) => {
+  const { name, email, password } = req.body;
+  try {
+    const response = await axios.post(`${AUTH_API_URL}/register`, {
+      name,
+      email,
+      password,
+    });
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    res.status(error.response?.status || 500).json({
+      error: error.response?.data || "Something went wrong during registration.",
+    });
+  }
+});
+router.post("/login", async (req, res) => {
+  const { password, email } = req.body;
+  try {
+    const response = await axios.post(`${AUTH_API_URL}/login`, {
+      
+      email,
+      password
+    });
+
+    const { user } = response.data;
+    console.log("user data", user)
+    req.session.currentUser = { userId:user.id, name:user.name, email }; // Add current user to session
+
+    // Log user data
+    const logged = req.session.currentUser
+    console.log("User logged in:", {logged});
+
+    res.redirect("/");
+  } catch (error) {
+    // Log the error details
+    console.error("Login error:", error.response?.data || error.message);
+
+    res.status(error.response?.status || 500).json({
+      error: error.response?.data || "Something went wrong during login.",
+    });
+  }
+});
+
+
 
 // Product detail route
 router.get("/products/:id", async (req, res) => {

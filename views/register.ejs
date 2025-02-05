@@ -1,146 +1,92 @@
-<style>
-/* Importing Google Fonts - Poppins */
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+<div class="container py-5">
+    <div style="margin-top:40px">
+             <p style="color:white">
+                 Arsenal receive Myles Lewis-Skelly referee red card appeal verdict after 'major' Michael Oliver error
 
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: "Poppins", sans-serif;
-}
-
-body {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 100vh;
-  padding: 15px;
-  background: ;
-  overflow: hidden;
-}
-
-.wrapper {
-  max-width: 500px;
-  width: 100%;
-  background: #fff;
-  border-radius: 5px;
-  box-shadow: 0px 4px 10px 1px rgba(0, 0, 0, 0.1);
-}
-
-.wrapper .title {
-  height: 120px;
-  background: #16a085;
-  border-radius: 5px 5px 0 0;
-  color: #fff;
-  font-size: 30px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wrapper form {
-  padding: 25px 35px;
-}
-
-.wrapper form .row {
-  height: 60px;
-  margin-top: 15px;
-  position: relative;
-}
-
-.wrapper form .row input {
-  height: 100%;
-  width: 100%;
-  outline: none;
-  padding-left: 70px;
-  border-radius: 5px;
-  border: 1px solid lightgrey;
-  font-size: 18px;
-  transition: all 0.3s ease;
-}
-
-form .row input:focus {
-  border-color: #16a085;
-}
-
-form .row input::placeholder {
-  color: #999;
-}
-
-.wrapper form .row i {
-  position: absolute;
-  width: 55px;
-  height: 100%;
-  color: #fff;
-  font-size: 22px;
-  background: #16a085;
-  border: 1px solid #16a085;
-  border-radius: 5px 0 0 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.wrapper form .pass {
-  margin-top: 12px;
-}
-
-.wrapper form .pass a {
-  color: #16a085;
-  font-size: 17px;
-  text-decoration: none;
-}
-
-.wrapper form .pass a:hover {
-  text-decoration: underline;
-}
-
-.wrapper form .button input {
-  margin-top: 20px;
-  color: #fff;
-  font-size: 20px;
-  font-weight: 500;
-  padding-left: 0px;
-  background: #16a085;
-  border: 1px solid #16a085;
-  cursor: pointer;
-}
-
-form .button input:hover {
-  background: #12876f;
-}
-
-.wrapper form .signup-link {
-  text-align: center;
-  margin-top: 45px;
-  font-size: 17px;
-}
-
-.wrapper form .signup-link a {
-  color: #16a085;
-  text-decoration: none;
-}
-
-form .signup-link a:hover {
-  text-decoration: underline;
-}
-</style>
-  <div class="wrapper">
-    <div class="title"><span>Login Form</span></div>
-    <form action="#">
-      <div class="row">
-        <i class="fas fa-user"></i>
-        <input type="text" placeholder="Email or Phone" required />
+             </p>
+         </div>
+  <div class="row justify-content-center">
+    <div class="col-md-6 col-lg-4">
+      <div class="text-center mb-4">
+        <img src="/path/to/logo.png" alt="Foodliie Logo" class="img-fluid" style="max-width: 150px;">
       </div>
-      <div class="row">
-        <i class="fas fa-lock"></i>
-        <input type="password" placeholder="Password" required />
+      <div class="card shadow">
+        <div class="card-body">
+          <!-- Form Heading -->
+          <h5 class="card-title text-center mb-3">
+        
+              Open an Account with Foodliie
+            
+              
+          </h5>
+
+          <!-- Form -->
+          <form action="/register" method="POST">
+            <div class="mb-3">
+              <label for="email" class="form-label">Email</label>
+              <input
+                type="email"
+                class="form-control shadow-sm"
+                id="email"
+                name="email"
+                required
+                placeholder="Enter your email"
+              >
+            </div>
+            
+              <div class="mb-3">
+                <label for="name" class="form-label">Full Name</label>
+                <input
+                  type="text"
+                  class="form-control shadow-sm"
+                  id="name"
+                  name="name"
+                  required
+                  placeholder="Enter your full name"
+                >
+              </div>
+            
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                class="form-control shadow-sm"
+                id="password"
+                name="password"
+                required
+                placeholder="Enter your password"
+              >
+            </div>
+
+            <!-- Google Sign-in Button -->
+            <div class="text-center mb-3">
+              <button class="btn btn-outline-primary w-100 shadow-sm">
+                <i class="bi bi-google"></i> Sign in with Google
+              </button>
+              
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center">
+              <button class="btn btn-success w-100 shadow-sm" id="submitBtn" type="submit">
+                Sign Up  
+              </button>
+               <p>Already have an account?
+              <a href="/register">Sign Up</a>
+              </p>
+            </div>
+          </form>
+        </div>
       </div>
-      <div class="pass"><a href="#">Forgot password?</a></div>
-      <div class="row button">
-        <input type="submit" value="Login" />
-      </div>
-      <div class="signup-link">Not a member? <a href="#">Signup now</a></div>
-    </form>
+    </div>
   </div>
+</div>
+
+<script>
+  // Add a loader animation when the submit button is clicked
+  const submitBtn = document.getElementById('submitBtn');
+  submitBtn.addEventListener('click', function () {
+    submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`;
+    submitBtn.disabled = true;
+  });
+</script>
