@@ -92,6 +92,70 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// Add To Wishlist
+
+router.post("/addToWishlist", async (req, res) => {
+  const { productId } = req.body;
+
+  try {
+    const response = await axios.post("http://localhost:5000/api/auth/addToWishlist", { productId });
+
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    console.error("Error adding to wishlist:", error.response?.data || error.message);
+    res.status(error.response?.status || 500).json({ error: "Failed to add product to wishlist." });
+  }
+});
+
+// Add to recently viewed
+
+router.post("/addToRecentlyViewed", async (req, res) => {
+  const { productId } = req.body;
+
+  try {
+    const response = await axios.post("http://localhost:5000/api/auth/addToRecentlyViewed", { productId });
+
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    console.error("Error adding to recently viewed:", error.response?.data || error.message);
+    res.status(error.response?.status || 500).json({ error: "Failed to add product to recently viewed." });
+  }
+});
+
+//Update Address
+
+router.post("/updateAddress", async (req, res) => {
+  const { hnumber, street, city, state } = req.body;
+
+  try {
+    const response = await axios.post("http://localhost:5000/api/auth/updateAddress", {
+      hnumber,
+      street,
+      city,
+      state,
+    });
+
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    console.error("Error updating address:", error.response?.data || error.message);
+    res.status(error.response?.status || 500).json({ error: "Failed to update address." });
+  }
+});
+
+// Get user Profile
+
+router.post("/getUserProfile", async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const response = await axios.post("http://localhost:5000/api/auth/getUserProfile", { userId });
+
+    res.status(response.status).json(response.data);
+  } catch (error) {
+    console.error("Error fetching user profile:", error.response?.data || error.message);
+    res.status(error.response?.status || 500).json({ error: "Failed to fetch user profile." });
+  }
+});
 
 
 // Product detail route
