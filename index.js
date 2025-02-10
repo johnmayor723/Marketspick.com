@@ -74,7 +74,7 @@ app.use("/payments", paymentRouter);
 
 // Start the server
 const PORT = process.env.PORT || 3010;
-app.listen(PORT, () => {
+app.listen(PORT,"0.0.0.0", () => {
       console.log(`Server is running on https://localhost:${PORT}`);
     });
   })
