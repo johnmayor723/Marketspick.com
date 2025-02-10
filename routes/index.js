@@ -30,10 +30,36 @@ router.get("/", async (req, res) => {
 });
 
 // Auth routes
+router.get("/profile", async (req, res) => {
+  try {
+    // Extract userId from session
+    const userId = req.session?.currentUser?.userId;
 
-router.get("/profile", function(req, res){
+    if (!userId) {
+      req.flash("error_msg", "User not logged in.");
+      return res.redirect("/login");
+    }
+
+    // Send request to fetch profile data
+    const response = await axios.post("http://api.foodliie.com/api/auth/profile", { userId }, {
+      headers: { "Content-Type": "application/json" },
+    });
+
+    // Save response data as userData
+    const userData = response.data;
+
+    // Render profile.ejs with userData
+    res.render("profile", { userData , title: "Profile Page"});
+  } catch (error) {
+    console.error("Error fetching user profile:", error.response?.data || error.message);
+    req.flash("error_msg", "Failed to load profile.");
+    res.redirect("/");
+  }
+});
+
+/*router.get("/profile", function(req, res){
     res.render("profile", {title: "Profile Page"})
-})
+})*/
 router.get("/login", function(req, res){
     res.render("login",  {title: "Login Page"})
 })
