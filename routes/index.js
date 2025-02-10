@@ -189,7 +189,7 @@ router.get("/products/categories/:categoryName", async (req, res) => {
 
     try {
         // Make a GET request to the external API to fetch products
-        const response = await axios.get(`https://pantry-hub-server.onrender.com/api/categories/${category}`);
+        const response = await axios.get(`http://api.foodliie.com/api/categories/${category}`);
         
 
         // Log the response data (for debugging purposes)
