@@ -106,8 +106,16 @@ router.post("/process", async (req, res) => {
     mobile,
     address
   }
+  
   const updateAddress = async (data) => {
   try {
+    const address = {
+  mobile: data.mobile,
+  hnumber: 1,
+  street: data.address,
+  city: "Lagos",
+  state: "Lagos",
+};
     const response = await axios.post("http://api.foodliie.com/api/auth/update-address", address, {
       headers: {
         "Content-Type": "application/json",
@@ -120,15 +128,6 @@ router.post("/process", async (req, res) => {
     console.error("Error updating address:", error.response?.data || error.message);
     throw error;
   }
-};
-
-// Example address object
-const address = {
-  mobile: data.mobile,
-  hnumber: 1,
-  street: data.address,
-  city: "Lagos",
-  state: "Lagos",
 };
 
 // Call the function
