@@ -38,7 +38,7 @@ router.post("/", async (req, res, next) => {
       userId,
     });
 
-    const couponValue = data.remainingValue || 0; // Get coupon value, default to 0 if none is returned
+    const couponValue = data.value || 0; // Get coupon value, default to 0 if none is returned
 
     // Render the checkout page with the coupon value
     res.render("checkout", {
