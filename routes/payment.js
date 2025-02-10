@@ -101,6 +101,39 @@ router.post("/process", async (req, res) => {
   const cart = req.session.cart;
   const { name, address, mobile, email, ordernotes, amount, paymentmethod, discountCode} = req.body;
   const userId = req.session.currentuser.userId;
+
+  const addressData = {
+    mobile,
+    address
+  }
+  const updateAddress = async (data) => {
+  try {
+    const response = await axios.post("http://api.foodliie.com/api/auth/update-address", address, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("Address updated successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating address:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+// Example address object
+const address = {
+  mobile: data.mobile,
+  hnumber: 1,
+  street: data.address,
+  city: "Lagos",
+  state: "Lagos",
+};
+
+// Call the function
+updateAddress(addressData)
+
   
 
   try {
