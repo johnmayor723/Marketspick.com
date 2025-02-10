@@ -14,7 +14,7 @@ const nodemailer = require('nodemailer');
 
 const API_URL = "http://api.foodliie.com/api/products";
 
-const AUTH_API_URL = "http://api.fooddeckliie.com/api/auth";
+const AUTH_API_URL = "http://api.foodliie.com/api/auth";
 
 // Homepage route
 router.get("/", async (req, res) => {
