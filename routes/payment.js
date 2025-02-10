@@ -39,7 +39,7 @@ router.post("/", async (req, res, next) => {
     });
 
     const couponValue = data.value || 0; // Get coupon value, default to 0 if none is returned
-
+    console.log("coupon value:", couponValue)
     // Render the checkout page with the coupon value
     res.render("checkout", {
       amount,
@@ -100,7 +100,7 @@ router.post("/process", async (req, res) => {
   console.log(req.body);
   const cart = req.session.cart;
   const { name, address, mobile, email, ordernotes, amount, paymentmethod, discountCode} = req.body;
-  const userId = req.session.currentuser.userId;
+  const userId = req.session.currentUser.userId;
 
   const addressData = {
     mobile,
@@ -147,6 +147,7 @@ updateAddress(addressData)
       );
 
       const activeCoupon = validateResponse.data.coupon;
+      console.log("active coupon:",activeCoupon)
 
       if (activeCoupon) {
         discount = Math.min(amount * 0.2, activeCoupon.value);
@@ -160,6 +161,7 @@ updateAddress(addressData)
           couponCode:discountCode,
           couponId
         });
+        console.log("activated coupon:", activateResponse)
 
         if (activateResponse.data.message === "Coupon activated successfully") {
           discount = Math.min(amount * 0.2, 50000); // Default maximum value
