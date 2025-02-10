@@ -142,8 +142,8 @@ updateAddress(addressData)
     // Step 1: Validate Coupon
     if (discountCode) {
       const validateResponse = await axios.post(
-        `${API_BASE_URL}/api/auth/validate-coupon`,
-        { userId } // Assuming userId is the email
+        `${API_BASE_URL}/api/agent/verify-couponCode`,
+        { couponCode:discountCode} // Assuming userId is the email
       );
 
       const activeCoupon = validateResponse.data.coupon;
