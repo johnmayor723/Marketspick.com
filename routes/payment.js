@@ -26,7 +26,7 @@ router.post("/", async (req, res, next) => {
 
   try {
     // Get the user ID from the session
-    const userId = req.session.currentuser.userId;
+    const userId = req.session.currentUser.userId;
 
     // Check if the user is authenticated
     if (!userId) {
