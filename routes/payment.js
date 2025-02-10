@@ -99,8 +99,8 @@ router.get("/callback", async (req, res) => {
 router.post("/process", async (req, res) => {
   console.log(req.body);
   const cart = req.session.cart;
-  const { name, address, mobile, email, ordernotes, amount, paymentmethod, couponId } = req.body;
-
+  const { name, address, mobile, email, ordernotes, amount, paymentmethod, discountCode} = req.body;
+  const userId = req.session.currentuser.userId;
   
 
   try {
@@ -108,10 +108,10 @@ router.post("/process", async (req, res) => {
     let agentIdentifier = null;
 
     // Step 1: Validate Coupon
-    if (couponId) {
+    if (couponCode) {
       const validateResponse = await axios.post(
         `${API_BASE_URL}/api/auth/validate-coupon`,
-        { userId: email } // Assuming userId is the email
+        { userId } // Assuming userId is the email
       );
 
       const activeCoupon = validateResponse.data.activeCoupon;
@@ -121,9 +121,12 @@ router.post("/process", async (req, res) => {
         agentIdentifier = activeCoupon.agentIdentifier;
       } else {
         // Step 2: Activate Coupon
+        const couponId = uuidv4(); // Generate a unique ID for couponId
+
         const activateResponse = await axios.post(`${API_BASE_URL}/api/auth/activate-coupon`, {
-          userId: email,
-          couponId,
+          userId,
+          couponCode:discountCode,
+          couponId
         });
 
         if (activateResponse.data.message === "Coupon activated successfully") {
