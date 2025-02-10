@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 const { generateOrderEmailHTML } = require("../helpers");
 
 const PAYSTACK_SECRET_KEY = "sk_test_d754fb2a648e8d822b09aa425d13fc62059ca08e";
-const API_BASE_URL = "https://api-mp-fl.onrender.com";
+const API_BASE_URL = "http://api.foodliie.com";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -34,7 +34,7 @@ router.post("/", async (req, res, next) => {
     }
 
     // Make the Axios call to validate coupon
-    const { data } = await axios.post("https://api-mp-fl.onrender.com/api/coupon/validate-coupon", {
+    const { data } = await axios.post("https://api.foodliie.com/api/coupon/validate-coupon", {
       userId,
     });
 
@@ -204,7 +204,7 @@ router.post("/process", async (req, res) => {
     const paystackData = {
       email,
       amount: finalAmount * 100, // Amount in kobo
-      callback_url: "http://api.fooddeckpro.com.ng/payments/callback",
+      callback_url: "http://api.fooddeckpro.com/payments/callback",
     };
 
     const response = await axios.post("https://api.paystack.co/transaction/initialize", paystackData, {
