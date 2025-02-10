@@ -108,17 +108,17 @@ router.post("/process", async (req, res) => {
     let agentIdentifier = null;
 
     // Step 1: Validate Coupon
-    if (couponCode) {
+    if (discountCode) {
       const validateResponse = await axios.post(
         `${API_BASE_URL}/api/auth/validate-coupon`,
         { userId } // Assuming userId is the email
       );
 
-      const activeCoupon = validateResponse.data.activeCoupon;
+      const activeCoupon = validateResponse.data.coupon;
 
       if (activeCoupon) {
-        discount = Math.min(amount * 0.2, activeCoupon.remainingValue);
-        agentIdentifier = activeCoupon.agentIdentifier;
+        discount = Math.min(amount * 0.2, activeCoupon.value);
+        
       } else {
         // Step 2: Activate Coupon
         const couponId = uuidv4(); // Generate a unique ID for couponId
@@ -139,16 +139,17 @@ router.post("/process", async (req, res) => {
     // Step 3: Update Coupon Value
     if (discount > 0) {
       await axios.post(`${API_BASE_URL}/api/auth/update-coupon`, {
-        userId: email,
-        discountAmount: discount,
+        userId,
+        couponCode,
+        usedValue: discount,
       });
     }
 
     // Step 4: Update Agent Sales
     if (agentIdentifier) {
       await axios.post(`${API_BASE_URL}/api/agent/update-sales`, {
-        agentIdentifier,
-        saleAmount: amount - discount,
+        couponCode: discountCode,
+        amount: amount - discount,
       });
     }
 
