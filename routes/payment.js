@@ -207,7 +207,7 @@ router.get("/callback", async (req, res) => {
     });
   }
 });
-app.post("/process-payment", async (req, res) => {
+router.post("/process", async (req, res) => {
   try {
     const { name, address, mobile, email, ordernotes, amount, paymentmethod, discountCode } = req.body;
     const userId = req.session.currentUser.userId;
