@@ -307,8 +307,8 @@ router.post("/process", async (req, res) => {
       await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
         userId,
         couponId: activatedCoupon.couponId,
-        value: updatedValue,
-        isValid,
+        usedValue: discountApplied,
+        
       });
 
       console.log("Updated activated coupon value.");
