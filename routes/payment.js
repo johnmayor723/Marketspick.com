@@ -14,6 +14,132 @@ const transporter = nodemailer.createTransport({
   },
 });
 
+// Payment function
+async function processOrderPayment(req, res, finalAmount) {
+  try {
+    const { name, address, mobile, email, ordernotes, paymentmethod } = req.body;
+    const cart = req.session.cart;
+    
+    const orderPayload = {
+      name,
+      address,
+      mobile,
+      email,
+      ordernotes,
+      amount: finalAmount,
+      paymentmethod,
+      status: "processing", // Default order status
+    };
+ // Address update function 
+  const updateAddress = async (dataMobile, dataAddress) => {
+  try {
+    const address = {
+  mobile: dataMobile,
+  hnumber: 1,
+  street: dataAddress,
+  city: "Lagos",
+  state: "Lagos",
+};
+    const response = await axios.post("http://api.foodliie.com/api/auth/update-address", address, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    console.log("Address updated successfully:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating address:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+
+    // Email Options
+    const userEmailOptions = {
+      from: '"FoodDeck" <fooddeck3@gmail.com>',
+      to: email,
+      subject: "Order Confirmation - FoodDeck",
+      html: generateOrderEmailHTML(cart, orderPayload),
+    };
+
+    const adminEmailOptions = {
+      from: '"FoodDeck" <fooddeck3@gmail.com>',
+      to: "fooddeck3@gmail.com",
+      subject: "New Order Notification - FoodDeck",
+      html: generateOrderEmailHTML(cart, orderPayload, true),
+    };
+
+    // Step 1: Handle Cash on Delivery
+    if (paymentmethod === "cashondelivery") {
+      console.log('Order Successful: Payment method is "Cash on Delivery".');
+
+      try {
+        // Post order to external server
+        const orderResponse = await axios.post(`${API_BASE_URL}/api/orders`, orderPayload);
+        console.log(orderResponse.data);
+
+        // Update user address only if order is successful
+        await updateAddress({ mobile, address });
+
+        // Send emails
+        await transporter.sendMail(userEmailOptions);
+        await transporter.sendMail(adminEmailOptions);
+
+        // Clear the cart and redirect to success page
+        req.session.cart = null;
+        req.flash("success_msg", "Order placed successfully with cash on delivery!");
+        return res.redirect("/");
+      } catch (error) {
+        console.error("Error posting order to external server:", error);
+        req.flash("error_msg", "Order processing failed. Please try again.");
+        return res.redirect("/cart");
+      }
+    }
+
+    // Step 2: Handle Paystack Payment
+    const paystackData = {
+      email,
+      amount: finalAmount * 100, // Amount in kobo
+      callback_url: "http://api.foodliie.com/payments/callback",
+    };
+
+    const response = await axios.post("https://api.paystack.co/transaction/initialize", paystackData, {
+      headers: {
+        Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
+      },
+    });
+
+    if (response.data.status) {
+      const authorizationUrl = response.data.data.authorization_url;
+
+      // Post order to external server
+      const orderResponse = await axios.post(`${API_BASE_URL}/api/orders`, orderPayload);
+      console.log(orderResponse.data);
+
+      // Update user address only if order is successful
+      await updateAddress({ mobile, address });
+
+      // Send emails
+      await transporter.sendMail(userEmailOptions);
+      await transporter.sendMail(adminEmailOptions);
+
+      // Clear the cart and redirect user to Paystack payment page
+      req.session.cart = null;
+      return res.redirect(authorizationUrl);
+    } else {
+      req.flash("error_msg", "Payment initialization failed. Please try again.");
+      return res.redirect("/cart");
+    }
+  } catch (error) {
+    console.error("Error processing payment:", error);
+    req.flash("error_msg", "Payment processing failed. Please try again.");
+    return res.redirect("/cart");
+  }
+}
+
+
+
 // Payment page route
 
 router.post("/", async (req, res, next) => {
@@ -58,20 +184,7 @@ router.post("/", async (req, res, next) => {
     });
   }
 });
-/*
-router.post("/", (req, res, next) => {
-  const amount = req.body.amount;
-  if (!req.session.cart) {
-    return res.render("cart", { cart, title: "Shopping Cart" });
-  }
 
-  res.render("checkout",{
-      amount ,
-      couponValue : 20000,
-    title: "Payment Page",
-  });
-});
-*/
 // Callback route
 router.get("/callback", async (req, res) => {
   try {
@@ -94,186 +207,101 @@ router.get("/callback", async (req, res) => {
     });
   }
 });
-
-// Payment processing route
-router.post("/process", async (req, res) => {
-  console.log(req.body);
-  const cart = req.session.cart;
-  const { name, address, mobile, email, ordernotes, amount, paymentmethod, discountCode} = req.body;
-  const userId = req.session.currentUser.userId;
-
-  const addressData = {
-    mobile,
-    address
-  }
-  
-  const updateAddress = async (data) => {
+app.post("/checkout", async (req, res) => {
   try {
-    const address = {
-  mobile: data.mobile,
-  hnumber: 1,
-  street: data.address,
-  city: "Lagos",
-  state: "Lagos",
-};
-    const response = await axios.post("http://api.foodliie.com/api/auth/update-address", address, {
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const { name, address, mobile, email, ordernotes, amount, paymentmethod, discountCode } = req.body;
+    const userId = req.session.currentUser.userId;
+    const cart = req.session.cart;
+
+    let finalAmount = amount; // Initialize finalAmount
+
+    // Step 1: Check for active coupon or discountCode
+    const couponResponse = await axios.post(`${API_BASE_URL}/api/auth/validate-coupon`, { userId });
+    const activeCoupon = couponResponse.data?.coupon;
+
+    if (!activeCoupon && !discountCode) {
+      // No active coupon and no discountCode → proceed with full payment
+      return await processOrderPayment(req, res, finalAmount);
+    }
+
+    // Step 2: If valid coupon exists for the user
+    if (activeCoupon) {
+      const maxDiscount = finalAmount * 0.2; // Max 20% discount
+      const discountApplied = Math.min(activeCoupon.value, maxDiscount);
+      finalAmount -= discountApplied;
+
+      // Update coupon value
+      const updatedValue = activeCoupon.value - discountApplied;
+      const isValid = updatedValue > 0;
+
+      await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
+        userId,
+        couponId: activeCoupon.couponId,
+        value: updatedValue,
+        isValid,
+      });
+
+      // Update agent total sales
+      await axios.patch(`${API_BASE_URL}/api/agent/update-sales`, {
+        couponCode: activeCoupon.couponCode,
+        amount: finalAmount, // Use finalAmount directly
+      });
+
+      return await processOrderPayment(req, res, finalAmount);
+    }
+
+    // Step 3: No active coupon, but a discountCode is provided → verify and activate
+    const verifyResponse = await axios.post("http://api.foodliie.com/api/agent/verify-couponCode", {
+      couponCode: discountCode,
     });
 
-    console.log("Address updated successfully:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating address:", error.response?.data || error.message);
-    throw error;
-  }
-};
-
-// Call the function
-updateAddress(addressData)
-
-  
-
-  try {
-    let discount = 0;
-    let agentIdentifier = null;
-
-    // Step 1: Validate Coupon
-    if (discountCode) {
-      const validateResponse = await axios.post(
-        `${API_BASE_URL}/api/agent/verify-couponCode`,
-        { couponCode:discountCode} // Assuming userId is the email
-      );
-
-      const activeCoupon = validateResponse.data.coupon;
-      console.log("active coupon:",activeCoupon)
-
-      if (activeCoupon) {
-        discount = Math.min(amount * 0.2, activeCoupon.value);
-        
-      } else {
-        // Step 2: Activate Coupon
-        const couponId = uuidv4(); // Generate a unique ID for couponId
-
-        const activateResponse = await axios.post(`${API_BASE_URL}/api/auth/activate-coupon`, {
-          userId,
-          couponCode:discountCode,
-          couponId
-        });
-        console.log("activated coupon:", activateResponse)
-
-        if (activateResponse.data.message === "Coupon activated successfully") {
-          discount = Math.min(amount * 0.2, 50000); // Default maximum value
-          agentIdentifier = activateResponse.data.coupon.agentIdentifier;
-        }
-      }
-    }
-
-    // Step 3: Update Coupon Value
-    if (discount > 0) {
-      await axios.post(`${API_BASE_URL}/api/auth/update-coupon`, {
-        userId,
-        couponCode,
-        usedValue: discount,
-      });
-    }
-
-    // Step 4: Update Agent Sales
-    if (agentIdentifier) {
-      await axios.post(`${API_BASE_URL}/api/agent/update-sales`, {
+    if (verifyResponse.data?.couponCode) {
+      // Activate new coupon for user
+      const activateResponse = await axios.post("http://api.foodliie.com/api/auth/activate-coupon", {
         couponCode: discountCode,
-        amount: amount - discount,
+        userId,
       });
-    }
 
-    // Final Amount After Discount
-    const finalAmount = amount - discount;
-  const orderPayload = {
-    name,
-    address,
-    mobile,
-    email,
-    ordernotes,
-    amount:finalAmount,
-    paymentmethod,
-    status: "processing", // Default order status
-  };
-    // Email Options
-    const userEmailOptions = {
-      from: '"FoodDeck" <fooddeck3@gmail.com>',
-      to: email,
-      subject: "Order Confirmation - FoodDeck",
-      html: generateOrderEmailHTML(cart, { ...orderPayload, amount: finalAmount }),
-    };
-
-    const adminEmailOptions = {
-      from: '"FoodDeck" <fooddeck3@gmail.com>',
-      to: "fooddeck3@gmail.com",
-      subject: "New Order Notification - FoodDeck",
-      html: generateOrderEmailHTML(cart, { ...orderPayload, amount: finalAmount }, true),
-    };
-
-    // Step 5: Handle Cash on Delivery
-    if (paymentmethod === "cashondelivery") {
-      console.log('Order Successful: Payment method is "Cash on Delivery".');
-
-      try {
-        // Post order to external server
-        const orderResponse = await axios.post(`${API_BASE_URL}/api/orders`, orderPayload);
-        console.log(orderResponse.data);
-
-        // Send emails
-        await transporter.sendMail(userEmailOptions);
-        await transporter.sendMail(adminEmailOptions);
-
-        // Clear the cart and redirect to success page
-        req.session.cart = null;
-        req.flash("success_msg", "Order placed successfully with cash on delivery!");
-        return res.redirect("/");
-      } catch (error) {
-        console.error("Error posting order to external server:", error);
-        req.flash("error_msg", "Order processing failed. Please try again.");
+      if (!activateResponse.data?.coupon) {
+        req.flash("error_msg", "Coupon activation failed.");
         return res.redirect("/cart");
       }
+
+      const activatedCoupon = activateResponse.data.coupon;
+
+      // Apply discount
+      const maxDiscount = finalAmount * 0.2;
+      const discountApplied = Math.min(activatedCoupon.value, maxDiscount);
+      finalAmount -= discountApplied;
+
+      // Update coupon value
+      const updatedValue = activatedCoupon.value - discountApplied;
+      const isValid = updatedValue > 0;
+
+      await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
+        userId,
+        couponId: activatedCoupon.couponId,
+        value: updatedValue,
+        isValid,
+      });
+
+      // Update agent total sales
+      await axios.patch(`${API_BASE_URL}/api/agent/update-sales`, {
+        couponCode: discountCode,
+        amount: finalAmount, // Use finalAmount after discount
+      });
+
+      return await processOrderPayment(req, res, finalAmount);
     }
 
-    // Step 6: Paystack Payment
-    const paystackData = {
-      email,
-      amount: finalAmount * 100, // Amount in kobo
-      callback_url: "http://api.fooddeckpro.com/payments/callback",
-    };
-
-    const response = await axios.post("https://api.paystack.co/transaction/initialize", paystackData, {
-      headers: {
-        Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
-      },
-    });
-
-    if (response.data.status) {
-      const authorizationUrl = response.data.data.authorization_url;
-
-      // Post order to external server
-      const orderResponse = await axios.post(`${API_BASE_URL}/api/orders`, orderPayload);
-      console.log(orderResponse.data);
-
-      // Send emails
-      await transporter.sendMail(userEmailOptions);
-      await transporter.sendMail(adminEmailOptions);
-
-      // Clear the cart and redirect user to Paystack payment page
-      req.session.cart = null;
-      return res.redirect(authorizationUrl);
-    } else {
-      req.flash("error_msg", "Payment initialization failed. Please try again.");
-      return res.redirect("/cart");
-    }
+    // If discount code is invalid, proceed with full payment
+    return await processOrderPayment(req, res, finalAmount);
   } catch (error) {
     console.error("Error processing payment:", error);
     req.flash("error_msg", "Payment processing failed. Please try again.");
     return res.redirect("/cart");
   }
 });
+
 
 module.exports = router;
