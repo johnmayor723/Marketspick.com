@@ -80,7 +80,7 @@ async function processOrderPayment(req, res, finalAmount) {
         console.log(orderResponse.data);
 
         // Update user address only if order is successful
-        await updateAddress({ mobile, address });
+        await updateAddress( mobile, address );
 
         // Send emails
         await transporter.sendMail(userEmailOptions);
@@ -207,7 +207,7 @@ router.get("/callback", async (req, res) => {
     });
   }
 });
-app.post("/checkout", async (req, res) => {
+app.post("/process-payment", async (req, res) => {
   try {
     const { name, address, mobile, email, ordernotes, amount, paymentmethod, discountCode } = req.body;
     const userId = req.session.currentUser.userId;
