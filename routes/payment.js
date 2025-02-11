@@ -215,25 +215,38 @@ router.post("/process", async (req, res) => {
 
     let finalAmount = amount; // Initialize finalAmount
 
-    // Step 1: Check for active coupon or discountCode
+    console.log(" Processing order for user:", userId);
+    console.log(" Initial amount:", amount);
+    console.log("Discount code provided:", discountCode);
+
+    // Step 1: Check for active coupon
+    console.log(" Checking for an active coupon...");
     const couponResponse = await axios.post(`${API_BASE_URL}/api/auth/validate-coupon`, { userId });
+    console.log(" Coupon response:", couponResponse.data);
+
     const activeCoupon = couponResponse.data?.coupon;
 
     if (!activeCoupon && !discountCode) {
-      // No active coupon and no discountCode → proceed with full payment
+      console.log(" No active coupon and no discount code provided → Proceeding with full payment.");
       return await processOrderPayment(req, res, finalAmount);
     }
 
-    // Step 2: If valid coupon exists for the user
+    // Step 2: Apply active coupon if available
     if (activeCoupon) {
+      console.log("Active coupon found:", activeCoupon);
+      
       const maxDiscount = finalAmount * 0.2; // Max 20% discount
       const discountApplied = Math.min(activeCoupon.value, maxDiscount);
       finalAmount -= discountApplied;
+
+      console.log(" Discount applied:", discountApplied);
+      console.log(" New final amount:", finalAmount);
 
       // Update coupon value
       const updatedValue = activeCoupon.value - discountApplied;
       const isValid = updatedValue > 0;
 
+      console.log(" Updating coupon with new value:", updatedValue);
       await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
         userId,
         couponId: activeCoupon.couponId,
@@ -241,7 +254,7 @@ router.post("/process", async (req, res) => {
         isValid,
       });
 
-      // Update agent total sales
+      console.log(" Updating agent total sales...");
       await axios.patch(`${API_BASE_URL}/api/agent/update-sales`, {
         couponCode: activeCoupon.couponCode,
         amount: finalAmount, // Use finalAmount directly
@@ -250,19 +263,26 @@ router.post("/process", async (req, res) => {
       return await processOrderPayment(req, res, finalAmount);
     }
 
-    // Step 3: No active coupon, but a discountCode is provided → verify and activate
+    // Step 3: No active coupon, but discountCode provided → Verify and Activate
+    console.log(" No active coupon found. Verifying discount code:", discountCode);
     const verifyResponse = await axios.post("http://api.foodliie.com/api/agent/verify-couponCode", {
       couponCode: discountCode,
     });
 
+    console.log(" Coupon verification response:", verifyResponse.data);
+
     if (verifyResponse.data?.couponCode) {
-      // Activate new coupon for user
+      console.log("Discount code is valid. Activating new coupon...");
+
       const activateResponse = await axios.post("http://api.foodliie.com/api/auth/activate-coupon", {
         couponCode: discountCode,
         userId,
       });
 
+      console.log(" Coupon activation response:", activateResponse.data);
+
       if (!activateResponse.data?.coupon) {
+        console.log(" Coupon activation failed.");
         req.flash("error_msg", "Coupon activation failed.");
         return res.redirect("/cart");
       }
@@ -274,10 +294,14 @@ router.post("/process", async (req, res) => {
       const discountApplied = Math.min(activatedCoupon.value, maxDiscount);
       finalAmount -= discountApplied;
 
+      console.log(" Activated coupon applied. Discount:", discountApplied);
+      console.log(" New final amount:", finalAmount);
+
       // Update coupon value
       const updatedValue = activatedCoupon.value - discountApplied;
       const isValid = updatedValue > 0;
 
+      console.log(" Updating activated coupon with new value:", updatedValue);
       await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
         userId,
         couponId: activatedCoupon.couponId,
@@ -285,7 +309,7 @@ router.post("/process", async (req, res) => {
         isValid,
       });
 
-      // Update agent total sales
+      console.log(" Updating agent total sales...");
       await axios.patch(`${API_BASE_URL}/api/agent/update-sales`, {
         couponCode: discountCode,
         amount: finalAmount, // Use finalAmount after discount
@@ -294,14 +318,13 @@ router.post("/process", async (req, res) => {
       return await processOrderPayment(req, res, finalAmount);
     }
 
-    // If discount code is invalid, proceed with full payment
+    console.log(" Discount code is invalid. Proceeding with full payment.");
     return await processOrderPayment(req, res, finalAmount);
   } catch (error) {
-    console.error("Error processing payment:", error);
+    console.error(" Error processing payment:", error.response?.data || error.message);
     req.flash("error_msg", "Payment processing failed. Please try again.");
     return res.redirect("/cart");
   }
 });
-
 
 module.exports = router;
