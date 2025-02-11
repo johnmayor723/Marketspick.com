@@ -254,7 +254,7 @@ router.post("/process", async (req, res) => {
       console.log("Coupon updated successfully.");
 
       // Update agent sales
-      await axios.patch(`${API_BASE_URL}/api/agent/update-sales`, {
+      await axios.patch(`${API_BASE_URL}/api/agent`, {
         couponCode: activeCoupon.couponCode,
         amount: finalAmount,
       });
@@ -314,7 +314,7 @@ router.post("/process", async (req, res) => {
       console.log("Updated activated coupon value.");
 
       // Update agent sales
-      await axios.patch(`${API_BASE_URL}/api/agent/update-sales`, {
+      await axios.patch(`${API_BASE_URL}/api/agent`, {
         couponCode: discountCode,
         amount: finalAmount,
       });
