@@ -15,7 +15,7 @@ const transporter = nodemailer.createTransport({
 });
 
 // Payment function
-async function processOrderPayment(req, res, finalAmount) {
+async function processOrderPayment(req, res, finalAmount, id) {
   try {
     const { name, address, mobile, email, ordernotes, paymentmethod } = req.body;
     const cart = req.session.cart;
@@ -34,6 +34,7 @@ async function processOrderPayment(req, res, finalAmount) {
   const updateAddress = async (dataMobile, dataAddress) => {
   try {
     const addressPayload = {
+      
       address:{
   mobile: dataMobile,
   hnumber: 1,
@@ -42,7 +43,7 @@ async function processOrderPayment(req, res, finalAmount) {
   state: "Lagos",
       },
 };
-    const response = await axios.post("http://api.foodliie.com/api/auth/update-address", addressPayload, {
+    const response = await axios.post("http://api.foodliie.com/api/auth/update-address", userId:id, addressPayload, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -226,7 +227,7 @@ router.post("/process", async (req, res) => {
     if (!activeCoupon && !discountCode) {
       // Case 1: No active coupon and no discount code → Proceed with full payment
       console.log("No active coupon and no discount code. Proceeding with full payment.");
-      return await processOrderPayment(req, res, finalAmount);
+      return await processOrderPayment(req, res, finalAmount, userId);
     } 
     else if (activeCoupon) {
       // Case 2: User already has an active coupon → Apply discount
@@ -257,7 +258,7 @@ router.post("/process", async (req, res) => {
         amount: finalAmount,
       });
 
-      return await processOrderPayment(req, res, finalAmount);
+      return await processOrderPayment(req, res, finalAmount, userId);
     } 
     else {
       // Case 3: No active coupon, but discountCode is provided → Verify and activate
@@ -271,7 +272,7 @@ router.post("/process", async (req, res) => {
 
       if (!verifyResponse.data?.couponCode) {
         console.log("Invalid discount code. Proceeding with full payment.");
-        return await processOrderPayment(req, res, finalAmount);
+        return await processOrderPayment(req, res, finalAmount, userId);
       }
 
       console.log("Valid discount code. Activating for user.");
