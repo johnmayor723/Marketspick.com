@@ -105,7 +105,7 @@ async function processOrderPayment(req, res, finalAmount) {
     };
 
     //const response = await axios.post("http://api.foodliie.com/api/order/initialize", {paystackData});
-     const response = await axios.post("http://api.foodliie.com/api/order/initialize", paystackData);
+     const response = await axios.post("http://api.foodliie.com/api/orders/initialize", paystackData);
     if (response.data) {
       const authorizationUrl = response.data.authUrl;
 
