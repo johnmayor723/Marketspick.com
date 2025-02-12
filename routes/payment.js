@@ -104,14 +104,14 @@ async function processOrderPayment(req, res, finalAmount) {
       callback_url: "http://api.foodliie.com/payments/callback",
     };
 
-    const response = await axios.post("https://api.paystack.co/transaction/initialize", paystackData, {
+    const response = await axios.post("http://api.foodliie.com/api/order/initialize", paystackData, {
       headers: {
         Authorization: `Bearer ${PAYSTACK_SECRET_KEY}`,
       },
     });
 
     if (response.data.status) {
-      const authorizationUrl = response.data.data.authorization_url;
+      const authorizationUrl = response.data.authorization_url;
 
       // Post order to external server
       const orderResponse = await axios.post(`${API_BASE_URL}/api/orders`, orderPayload);
