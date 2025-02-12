@@ -34,8 +34,8 @@ async function processOrderPayment(req, res, finalAmount, id) {
   const updateAddress = async (dataMobile, dataAddress) => {
   try {
     const addressPayload = {
-      
-      address:{
+  userId: id,
+  address:{
   mobile: dataMobile,
   hnumber: 1,
   street: dataAddress,
@@ -43,7 +43,7 @@ async function processOrderPayment(req, res, finalAmount, id) {
   state: "Lagos",
       },
 };
-    const response = await axios.post("http://api.foodliie.com/api/auth/update-address", userId:id, addressPayload, {
+    const response = await axios.post("http://api.foodliie.com/api/auth/update-address",  addressPayload, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -117,7 +117,7 @@ async function processOrderPayment(req, res, finalAmount, id) {
       console.log(orderResponse.data);
 
       // Update user address only if order is successful
-      await updateAddress({ mobile, address });
+      await updateAddress(mobile, address );
 
       // Send emails
       await transporter.sendMail(userEmailOptions);
