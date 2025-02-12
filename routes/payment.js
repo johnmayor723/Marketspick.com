@@ -110,7 +110,7 @@ async function processOrderPayment(req, res, finalAmount) {
       },
     });
 
-    if (response.data.status) {
+    if (response.status) {
       const authorizationUrl = response.data.authorization_url;
 
       // Post order to external server
