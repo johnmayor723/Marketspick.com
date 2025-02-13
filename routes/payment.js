@@ -45,7 +45,7 @@ async function processOrderPayment(req, res, finalAmount, id) {
       },
 };
     console.log("address payload:",addressPayload)
-    const response = await axios.post("http://api.foodliie.com/api/auth/update-address",  addressPayload, {
+    const response = await axios.put("http://api.foodliie.com/api/auth/update-address",  addressPayload, {
       headers: {
         "Content-Type": "application/json",
       },
