@@ -30,6 +30,7 @@ async function processOrderPayment(req, res, finalAmount, id) {
       paymentmethod,
       status: "processing", // Default order status
     };
+    console.log("order payload:",orderPayload)
  // Address update function 
   const updateAddress = async (dataMobile, dataAddress) => {
   try {
@@ -43,6 +44,7 @@ async function processOrderPayment(req, res, finalAmount, id) {
   state: "Lagos",
       },
 };
+    console.log("address payload:",addressPayload)
     const response = await axios.post("http://api.foodliie.com/api/auth/update-address",  addressPayload, {
       headers: {
         "Content-Type": "application/json",
