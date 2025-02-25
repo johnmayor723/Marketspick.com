@@ -50,8 +50,10 @@
             </div>
 
             <!-- Google Sign-in Button -->
+       <form id="googleLoginForm" action="/auth/google" method="POST">
+ <input type="hidden" name="token" id="googleToken" />
             <div class="text-center mb-3">
-              <button class="btn btn-outline-primary w-100 shadow-sm">
+              <button id="googleSignIn" class="btn btn-outline-primary w-100 shadow-sm">
                 <i class="bi bi-google"></i> Sign in with Google
               </button>
             </div>
@@ -72,6 +74,22 @@
   </div>
 </div>
 
-<script>
-  
-</script>
+script>
+    function handleCredentialResponse(response) {
+      // Set the token inside the form
+      document.getElementById('googleToken').value = response.credential;
+      // Submit the form
+      document.getElementById('googleLoginForm').submit();
+    }
+
+    window.onload = function () {
+      google.accounts.id.initialize({
+        client_id: "YOUR_GOOGLE_CLIENT_ID",
+        callback: handleCredentialResponse
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("googleSignIn"),
+        { theme: "outline", size: "large" }
+      );
+    };
+  </script>
