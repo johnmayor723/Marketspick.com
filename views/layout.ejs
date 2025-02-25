@@ -160,6 +160,25 @@ flex-direction: row;
   <%- include("partials/footer") %>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
+<script>
+    function handleCredentialResponse(response) {
+      // Set the token inside the form
+      document.getElementById('googleToken').value = response.credential;
+      // Submit the form
+      document.getElementById('googleLoginForm').submit();
+    }
+
+    window.onload = function () {
+      google.accounts.id.initialize({
+        client_id: "YOUR_GOOGLE_CLIENT_ID",
+        callback: handleCredentialResponse
+      });
+      google.accounts.id.renderButton(
+        document.getElementById("googleSignIn"),
+        { theme: "outline", size: "large" }
+      );
+    };
+  </script>
   
 </body>
 </html>
