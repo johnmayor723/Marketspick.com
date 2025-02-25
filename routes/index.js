@@ -68,7 +68,8 @@ router.get("/register", function(req, res){
 })
 
 router.get("/logout", function(req, res){
-    req.session.currentUser = null
+    req.session.currentUser = null;
+    req.flash("error_msg", "Failed to login.");
     res.redirect("/")
 })
 
@@ -87,13 +88,14 @@ router.post("/auth/google", async (req, res) => {
     // If API returns a successful response
     if (apiResponse.status === 201 && apiResponse.data.user) {
       req.session.currentUser = apiResponse.data.user;
-      return res.redirect("/dashboard");
+     req.flash("success_msg", "Login Successful")
+      return res.redirect("/");
     }
 
     res.redirect("/login?error=InvalidGoogleAuth");
   } catch (error) {
     console.error("Google authentication error:", error);
-    res.redirect("/login?error=GoogleLoginFailed");
+    res.redirect("/login");
   }
 });
 
