@@ -102,44 +102,52 @@ router.post("/auth/google", async (req, res) => {
 // Register route
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
+
   try {
     const response = await axios.post(`${AUTH_API_URL}/register`, {
       name,
       email,
       password,
     });
-    res.status(response.status).json(response.data);
+
+    if (response.status === 200 && response.data.user) {
+      req.flash("success_msg", "Registration successful. You can now log in.");
+      return res.render("index");
+    }
+
+    req.flash("error_msg", "Unexpected response from server.");
+    return res.redirect("/login");
+
   } catch (error) {
-    res.status(error.response?.status || 500).json({
-      error: error.response?.data || "Something went wrong during registration.",
-    });
+    req.flash("error_msg", error.response?.data?.error || "Registration failed. Please try again.");
+    return res.redirect("/register");
   }
 });
+
 router.post("/login", async (req, res) => {
-  const { password, email } = req.body;
+  const { email, password } = req.body;
+
   try {
     const response = await axios.post(`${AUTH_API_URL}/login`, {
-      
       email,
       password
     });
 
     const { user } = response.data;
-    console.log("user data", user)
-    req.session.currentUser = { userId:user.id, name:user.name, email }; // Add current user to session
+    console.log("User data:", user);
 
-    // Log user data
-    const logged = req.session.currentUser
-    console.log("User logged in:", {logged});
+    req.session.currentUser = { userId: user.id, name: user.name, email }; // Add current user to session
 
-    res.redirect("/");
+    console.log("User logged in:", req.session.currentUser);
+
+    req.flash("success_msg", "Login successful.");
+    return res.redirect("/");
+
   } catch (error) {
-    // Log the error details
     console.error("Login error:", error.response?.data || error.message);
 
-    res.status(error.response?.status || 500).json({
-      error: error.response?.data || "Something went wrong during login.",
-    });
+    req.flash("error_msg", error.response?.data?.error || "Invalid credentials. Please try again.");
+    return res.redirect("/login");
   }
 });
 
