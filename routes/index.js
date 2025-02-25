@@ -72,7 +72,30 @@ router.get("/logout", function(req, res){
     res.redirect("/")
 })
 
+//google auth route
 
+router.post("/auth/google", async (req, res) => {
+  const { token } = req.body;
+
+  try {
+    // Send token to your authentication API
+    const apiResponse = await axios.post(
+      "https://api.foodliie.com/auth/google",
+      { token }
+    );
+
+    // If API returns a successful response
+    if (apiResponse.status === 201 && apiResponse.data.user) {
+      req.session.currentUser = apiResponse.data.user;
+      return res.redirect("/dashboard");
+    }
+
+    res.redirect("/login?error=InvalidGoogleAuth");
+  } catch (error) {
+    console.error("Google authentication error:", error);
+    res.redirect("/login?error=GoogleLoginFailed");
+  }
+});
 
 // Register route
 router.post("/register", async (req, res) => {
