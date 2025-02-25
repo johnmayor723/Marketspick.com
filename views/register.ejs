@@ -59,11 +59,12 @@
             </div>
 
             <!-- Google Sign-in Button -->
+       <form id="googleLoginForm" action="/auth/google" method="POST">
+ <input type="hidden" name="token" id="googleToken" />
             <div class="text-center mb-3">
-              <button class="btn btn-outline-primary w-100 shadow-sm">
+              <button id="googleSignIn" class="btn btn-outline-primary w-100 shadow-sm">
                 <i class="bi bi-google"></i> Sign in with Google
               </button>
-              
             </div>
 
             <!-- Submit Button -->
