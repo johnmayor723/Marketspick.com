@@ -160,7 +160,7 @@ flex-direction: row;
   <%- include("partials/footer") %>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
-<script>
+  <script>
     function handleCredentialResponse(response) {
       // Set the token inside the form
       document.getElementById('googleToken').value = response.credential;
@@ -170,7 +170,7 @@ flex-direction: row;
 
     window.onload = function () {
       google.accounts.id.initialize({
-        client_id: "YOUR_GOOGLE_CLIENT_ID",
+        client_id: "328728614931-3ksi7t8cv8pt1t0d1us8d9opeg6rsnvr.apps.googleusercontent.com",
         callback: handleCredentialResponse
       });
       google.accounts.id.renderButton(
