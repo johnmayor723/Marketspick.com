@@ -151,13 +151,30 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.post("/auth/request-password-reset", async (req, res) => {
+    const { email } = req.body;
+
+    try {
+        // Make request to Foodliie's API
+        const response = await axios.post("http://api.foodliie.com/api/auth/request-password-reset", { email });
+
+        // Redirect to a confirmation page (or show a success message)
+        res.render("password-reset-confirmation", { message: "A reset link has been sent to your email." });
+    } catch (error) {
+        res.status(500).json({
+            error: "Failed to request password reset",
+            details: error.response?.data || error.message,
+        });
+    }
+});
+
  // Route to render the password reset form
 router.get("/auth/reset-password/:token", (req, res) => {
     const { token } = req.params;
     res.render("reset-password", { token });
 });
 // Route to reset password
- router.post("/auth/reset-password", async (req, res) => {
+ router.post("/reset-password", async (req, res) => {
     const { token, password, password2 } = req.body;
 
     // Validate passwords match
