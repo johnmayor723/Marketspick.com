@@ -151,6 +151,39 @@ router.post("/login", async (req, res) => {
   }
 });
 
+ // Route to render the password reset form
+router.get("/auth/reset-password/:token", (req, res) => {
+    const { token } = req.params;
+    res.render("reset-password", { token });
+});
+// Route to reset password
+ router.post("/auth/reset-password", async (req, res) => {
+    const { token, password, password2 } = req.body;
+
+    // Validate passwords match
+    if (password !== password2) {
+        return res.status(400).json({ error: "Passwords do not match" });
+    }
+
+    try {
+        // Send request to external API
+        const response = await axios.post("https://api.foodliie.com/api/auth/reset-password", {
+            token,
+            password,
+        });
+
+        // Handle success
+        res.json({ message: "Password reset successful", data: response.data });
+    } catch (error) {
+        // Handle errors from the API
+        res.status(500).json({
+            error: "Failed to reset password",
+            details: error.response?.data || error.message,
+        });
+    }
+});    
+
+
 // Add To Wishlist
 
 router.post("/addToWishlist", async (req, res) => {
