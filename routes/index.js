@@ -183,23 +183,20 @@ router.get("/auth/reset-password/:token", (req, res) => {
     }
 
     try {
-        // Send request to external API
-        const response = await axios.post("https://api.foodliie.com/api/auth/reset-password", {
-            token,
+        // API expects token in both request parameter and payload
+        const response = await axios.post(`https://api.foodliie.com/api/auth/reset-password/${token}`, {
+            token, // Token also included in the request body
             password,
         });
 
-        // Handle success
         res.json({ message: "Password reset successful", data: response.data });
     } catch (error) {
-        // Handle errors from the API
-        res.status(500).json({
+        res.status(error.response?.status || 500).json({
             error: "Failed to reset password",
             details: error.response?.data || error.message,
         });
     }
-});    
-
+});
 
 // Add To Wishlist
 
