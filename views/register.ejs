@@ -57,22 +57,18 @@
             </div>
 
             <!-- Google Sign-in Button -->
-       <form id="googleLoginForm" action="/auth/google" method="POST">
- <input type="hidden" name="token" id="googleToken" />
-            <div class="text-center mb-3">
-              <button id="googleSignIn" class="btn btn-outline-primary w-100 shadow-sm">
-                <i class="bi bi-google"></i> Sign in with Google
-              </button>
-            </div>
-
-            <!-- Submit Button -->
-            <div class="text-center">
-              <button class="btn btn-success w-100 shadow-sm" id="submitBtn" type="submit">
-                Sign Up  
-              </button>
-         </form>
+       
           <!-- Google Login Form -->
-
+</form>
+            <!-- Google Login Form -->
+<form  action="/auth/google" method="get">
+  
+  <div class="text-center mt-3">
+    <button id="googleSignIn" class="btn btn-outline-primary w-100 shadow-sm">
+      <i class="bi bi-google" style="color: #4285F4;"></i> Sign in with Google
+    </button>
+  </div>
+</form>
                <p>Already have an account?
               <a href="/register">Sign Up</a>
               </p>
