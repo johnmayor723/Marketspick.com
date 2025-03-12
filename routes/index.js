@@ -183,7 +183,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.post("/auth/request-password-reset", async (req, res) => {
+router.post("/request-password-reset", async (req, res) => {
     const { email } = req.body;
 
     try {
