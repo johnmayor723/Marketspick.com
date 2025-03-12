@@ -128,7 +128,7 @@ router.get("/auth/google/callback", async (req, res) => {
 
         // Send User to API for Registration/Login
         console.log("Sending user data to API:", googleUser);
-        const apiResponse = await axios.post("https://api.foodliie.com/api/auth/google", {
+        const apiResponse = await axios.post("https://api.foodliie.com/api/auth/google-auth", {
             email: googleUser.email,
             name: googleUser.name,
             googleId: googleUser.id, // Prevent duplicate registration
