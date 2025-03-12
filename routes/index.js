@@ -98,7 +98,7 @@ app.get("/auth/google/callback", async (req, res) => {
             client_id:ID,
             client_secret:SECRET,
             code,
-            redirect_uri: "http://localhost:3010/auth/google/callback",
+            redirect_uri: "https://marketspick.com/auth/google/callback",
             grant_type: "authorization_code",
         });
 
