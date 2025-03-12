@@ -89,47 +89,64 @@ router.get("/auth/google/callback", async (req, res) => {
     const { code } = req.query;
 
     if (!code) {
+        console.error("Google OAuth Error: No authorization code provided");
         return res.status(400).send("No authorization code provided");
     }
 
+    console.log("Authorization Code received:", code);
+
     try {
         // Exchange code for access token
+        console.log("Requesting Access Token...");
         const tokenResponse = await axios.post("https://oauth2.googleapis.com/token", {
-            client_id:ID,
-            client_secret:SECRET,
+            client_id: ID,
+            client_secret: SECRET,
             code,
             redirect_uri: "https://marketspick.com/auth/google/callback",
             grant_type: "authorization_code",
         });
 
+        console.log("Access Token Response:", tokenResponse.data);
         const { access_token } = tokenResponse.data;
 
+        if (!access_token) {
+            throw new Error("Access token missing in response");
+        }
+
         // Fetch user profile from Google
+        console.log("Fetching Google User Info...");
         const userResponse = await axios.get("https://www.googleapis.com/oauth2/v2/userinfo", {
             headers: { Authorization: `Bearer ${access_token}` },
         });
 
+        console.log("Google User Data:", userResponse.data);
         const googleUser = userResponse.data;
 
-        // **Step 3: Send User to API for Registration/Login**
+        if (!googleUser.email) {
+            throw new Error("Google user data missing email");
+        }
+
+        // Send User to API for Registration/Login
+        console.log("Sending user data to API:", googleUser);
         const apiResponse = await axios.post("https://api.foodliie.com/api/auth/google", {
             email: googleUser.email,
             name: googleUser.name,
             googleId: googleUser.id, // Prevent duplicate registration
         });
 
+        console.log("API Response:", apiResponse.data);
         const { user, token } = apiResponse.data;
 
-        // **Step 4: Save in Session**
+        // Save in Session
         req.session.currentUser = user;
 
+        console.log("User successfully authenticated, redirecting...");
         res.redirect("/");
     } catch (error) {
         console.error("Google OAuth Error:", error.response?.data || error.message);
-        res.status(500).send("Authentication failed");
+        res.status(500).send(`Authentication failed: ${error.response?.data?.error || error.message}`);
     }
 });
-
 
 // Register route
 router.post("/register", async (req, res) => {
