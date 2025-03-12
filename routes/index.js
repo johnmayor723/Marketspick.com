@@ -11,7 +11,7 @@ const nodemailer = require('nodemailer');
       },
 });
 const ID = "328728614931-3ksi7t8cv8pt1t0d1us8d9opeg6rsnvr.apps.googleusercontent.com";
-const SECRET = "";
+const SECRET = "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";
 
 const API_URL = "http://api.foodliie.com/api/products";
 
