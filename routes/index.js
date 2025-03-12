@@ -200,7 +200,7 @@ router.post("/request-password-reset", async (req, res) => {
     }
 });
 router.get("/reset-password",(req, res)=>{
- res.render("reset-password")
+ res.render("request-password-reset")
 })
 
  // Route to render the password reset form
