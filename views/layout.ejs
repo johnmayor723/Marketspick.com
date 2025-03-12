@@ -45,7 +45,7 @@
         <!-- Template Stylesheet -->
         <link href="/css/style.css" rel="stylesheet">
           <!-- Template Stylesheet -->
- <script src="https://accounts.google.com/gsi/client" async defer></script>
+ 
 </head>
         
 <style>
@@ -172,25 +172,7 @@ flex-direction: row;
   <%- include("partials/footer") %>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
-  <script>
-    function handleCredentialResponse(response) {
-      // Set the token inside the form
-      document.getElementById('googleToken').value = response.credential;
-      // Submit the form
-      document.getElementById('googleLoginForm').submit();
-    }
-
-    window.onload = function () {
-      google.accounts.id.initialize({
-        client_id: "328728614931-3ksi7t8cv8pt1t0d1us8d9opeg6rsnvr.apps.googleusercontent.com",
-        callback: handleCredentialResponse
-      });
-      google.accounts.id.renderButton(
-        document.getElementById("googleSignIn"),
-        { theme: "outline", size: "large" }
-      );
-    };
-  </script>
+  
   
 </body>
 </html>
