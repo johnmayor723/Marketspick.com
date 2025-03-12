@@ -77,7 +77,7 @@ router.get("/logout", function(req, res){
 //google auth route
 
 // **Step 1: Redirect to Google OAuth**
-app.get("/auth/google", (req, res) => {
+router.get("/auth/google", (req, res) => {
     const redirectUri = "https://marketspick.com/auth/google/callback"; // Web app redirect
     const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${ID}&redirect_uri=${redirectUri}&response_type=code&scope=email%20profile`;
 
@@ -85,7 +85,7 @@ app.get("/auth/google", (req, res) => {
 });
 
 // **Step 2: Handle Google OAuth Callback**
-app.get("/auth/google/callback", async (req, res) => {
+router.get("/auth/google/callback", async (req, res) => {
     const { code } = req.query;
 
     if (!code) {
