@@ -183,7 +183,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-router.get("/request-password-reset", async (req, res) => {
+router.post("/request-password-reset", async (req, res) => {
     const { email } = req.body;
 
     try {
@@ -199,6 +199,9 @@ router.get("/request-password-reset", async (req, res) => {
         });
     }
 });
+router.get("/reset-password",(req, res)=>{
+ res.render("reset-password")
+})
 
  // Route to render the password reset form
 router.get("/auth/reset-password/:token", (req, res) => {
