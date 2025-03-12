@@ -10,7 +10,8 @@ const nodemailer = require('nodemailer');
         pass: 'xyca sbvx hifi amzs',
       },
 });
-
+const ID = "328728614931-3ksi7t8cv8pt1t0d1us8d9opeg6rsnvr.apps.googleusercontent.com";
+const SECRET = "";
 
 const API_URL = "http://api.foodliie.com/api/products";
 
@@ -75,29 +76,60 @@ router.get("/logout", function(req, res){
 
 //google auth route
 
-router.post("/auth/google", async (req, res) => {
-  const { token } = req.body;
+// **Step 1: Redirect to Google OAuth**
+app.get("/auth/google", (req, res) => {
+    const redirectUri = "https://marketspick.com/auth/google/callback"; // Web app redirect
+    const authUrl = `https://accounts.google.com/o/oauth2/v2/auth?client_id=${ID}&redirect_uri=${redirectUri}&response_type=code&scope=email%20profile`;
 
-  try {
-    // Send token to your authentication API
-    const apiResponse = await axios.post(
-      "https://api.foodliie.com/auth/google",
-      { token }
-    );
+    res.redirect(authUrl); // Redirect user to Google
+});
 
-    // If API returns a successful response
-    if (apiResponse.status === 201 && apiResponse.data.user) {
-      req.session.currentUser = apiResponse.data.user;
-     req.flash("success_msg", "Login Successful")
-      return res.redirect("/");
+// **Step 2: Handle Google OAuth Callback**
+app.get("/auth/google/callback", async (req, res) => {
+    const { code } = req.query;
+
+    if (!code) {
+        return res.status(400).send("No authorization code provided");
     }
 
-    res.redirect("/login?error=InvalidGoogleAuth");
-  } catch (error) {
-    console.error("Google authentication error:", error);
-    res.redirect("/login");
-  }
+    try {
+        // Exchange code for access token
+        const tokenResponse = await axios.post("https://oauth2.googleapis.com/token", {
+            client_id:ID,
+            client_secret:SECRET,
+            code,
+            redirect_uri: "http://localhost:3010/auth/google/callback",
+            grant_type: "authorization_code",
+        });
+
+        const { access_token } = tokenResponse.data;
+
+        // Fetch user profile from Google
+        const userResponse = await axios.get("https://www.googleapis.com/oauth2/v2/userinfo", {
+            headers: { Authorization: `Bearer ${access_token}` },
+        });
+
+        const googleUser = userResponse.data;
+
+        // **Step 3: Send User to API for Registration/Login**
+        const apiResponse = await axios.post("https://api.foodliie.com/api/auth/google", {
+            email: googleUser.email,
+            name: googleUser.name,
+            googleId: googleUser.id, // Prevent duplicate registration
+        });
+
+        const { user, token } = apiResponse.data;
+
+        // **Step 4: Save in Session**
+        req.session.currentUser = user;
+
+        res.redirect("/");
+    } catch (error) {
+        console.error("Google OAuth Error:", error.response?.data || error.message);
+        res.status(500).send("Authentication failed");
+    }
 });
+
 
 // Register route
 router.post("/register", async (req, res) => {
