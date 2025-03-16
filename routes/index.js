@@ -4,18 +4,21 @@ const axios = require("axios");
 const nodemailer = require('nodemailer');
 
  const mailer = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: 'fooddeck3@gmail.com',
-        pass: 'xyca sbvx hifi amzs',
-      },
+     host: "smtp.zoho.com",
+     port: 465,
+     secure: "true",
+     auth: {
+      user: "support@marketspick.com",
+      pass: "#@T1onal_Mayor",
+    },
 });
+
 const ID = "328728614931-3ksi7t8cv8pt1t0d1us8d9opeg6rsnvr.apps.googleusercontent.com";
 const SECRET = "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";
 
-const API_URL = "http://api.foodliie.com/api/products";
+const API_URL = "https://api.foodliie.com/api/products";
 
-const AUTH_API_URL = "http://api.foodliie.com/api/auth";
+const AUTH_API_URL = "https://api.foodliie.com/api/auth";
 
 // Homepage route
 router.get("/", async (req, res) => {
@@ -42,7 +45,7 @@ router.get("/profile", async (req, res) => {
     }
 
     // Send request to fetch profile data
-    const response = await axios.post("http://api.foodliie.com/api/auth/profile", { userId }, {
+    const response = await axios.post("https://api.foodliie.com/api/auth/profile", { userId }, {
       headers: { "Content-Type": "application/json" },
     });
 
@@ -128,7 +131,7 @@ router.get("/auth/google/callback", async (req, res) => {
 
         // Send User to API for Registration/Login
         console.log("Sending user data to API:", googleUser);
-        const apiResponse = await axios.post("https://api.foodliie.com/api/auth/google-auth", {
+        const apiResponse = await axios.post("https://api.foodliie.com/api/auth/google", {
             email: googleUser.email,
             name: googleUser.name,
             googleId: googleUser.id, // Prevent duplicate registration
@@ -151,27 +154,47 @@ router.get("/auth/google/callback", async (req, res) => {
 // Register route
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
+  console.log("➡ Register route reached");
 
   try {
-    const response = await axios.post(`${AUTH_API_URL}/register`, {
+    console.log("➡ Sending request to API with data:", { name, email, password });
+
+    const response = await axios.post("https://api.foodliie.com/api/auth/register", {
       name,
       email,
       password,
     });
 
-    if (response.status === 200 && response.data.user) {
-      req.flash("success_msg", "Registration successful. You can now log in.");
-      return res.render("index");
+    console.log("✅ Response received:", response.status, response.data);
+
+    // ✅ Check for success message instead of user field
+    if ([200, 201].includes(response.status) && response.data.message) {
+      console.log("✅ User registered successfully. Redirecting to login...");
+      req.flash("success_msg", response.data.message);
+      return res.redirect("/register");
     }
 
+    console.log("⚠ Unexpected response format:", response.data);
     req.flash("error_msg", "Unexpected response from server.");
-    return res.redirect("/login");
+    return res.redirect("/register");
 
   } catch (error) {
-    req.flash("error_msg", error.response?.data?.error || "Registration failed. Please try again.");
+    console.error("❌ Registration error:", error.message);
+
+    if (error.response) {
+      console.error("❌ Error Status Code:", error.response.status);
+      console.error("❌ Full Error Response:", JSON.stringify(error.response.data, null, 2));
+    } else {
+      console.error("❌ No response received. Possible network error.");
+    }
+
+    const errorMessage = error.response?.data?.error || "Registration failed. Please try again.";
+    req.flash("error_msg", errorMessage);
     return res.redirect("/register");
   }
 });
+
+//login route
 
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
@@ -205,10 +228,11 @@ router.post("/request-password-reset", async (req, res) => {
 
     try {
         // Make request to Foodliie's API
-        const response = await axios.post("http://api.foodliie.com/api/auth/request-password-reset", { email });
+        const response = await axios.post("https://api.foodliie.com/api/auth/request-password-reset", { email });
 
         // Redirect to a confirmation page (or show a success message)
-        res.render("password-reset-confirmation", { message: "A reset link has been sent to your email." });
+        req.flash("success_msg", response.data.message)
+        res.redirect("/reset-password")
     } catch (error) {
         res.status(500).json({
             error: "Failed to request password reset",
@@ -217,13 +241,13 @@ router.post("/request-password-reset", async (req, res) => {
     }
 });
 router.get("/reset-password",(req, res)=>{
- res.render("request-password-reset")
+ res.render("request-password-reset", {title:"Reset Password"})
 })
 
  // Route to render the password reset form
-router.get("/auth/reset-password/:token", (req, res) => {
+router.get("/api/auth/reset-password/:token", (req, res) => {
     const { token } = req.params;
-    res.render("reset-password", { token });
+    res.render("reset-password", { token, title:"" });
 });
 // Route to reset password
  router.post("/reset-password", async (req, res) => {
@@ -238,10 +262,10 @@ router.get("/auth/reset-password/:token", (req, res) => {
         // API expects token in both request parameter and payload
         const response = await axios.post(`https://api.foodliie.com/api/auth/reset-password/${token}`, {
             token, // Token also included in the request body
-            password,
+            newPassword:password,
         });
-
-        res.json({ message: "Password reset successful", data: response.data });
+         req.flash("success_msg", response.data.message);
+        res.redirect("/login");
     } catch (error) {
         res.status(error.response?.status || 500).json({
             error: "Failed to reset password",

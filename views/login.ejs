@@ -1,4 +1,16 @@
+    <!-- Display success message -->
+    <% if (success_msg.length > 0) { %>
+        <div class="alert alert-success">
+            <%= success_msg %>
+        </div>
+    <% } %>
 
+    <!-- Display error message -->
+    <% if (error_msg.length > 0) { %>
+        <div class="alert alert-danger">
+            <%= error_msg %>
+        </div>
+    <% } %>
  <div class="container py-5">
          <div style="margin-top:40px">
              <p style="color:white">
@@ -68,7 +80,7 @@
               <a href="/register">Sign Up</a>
               </p>
           <p>Forgotten your password?
-              <a href="/request-password-reset">Click here</a>
+              <a href="/reset-password">Click here</a>
               </p>
             </div>
           
