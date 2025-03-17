@@ -64,8 +64,19 @@ router.get("/profile", async (req, res) => {
 /*router.get("/profile", function(req, res){
     res.render("profile", {title: "Profile Page"})
 })*/
+
+router.get("/auth", function(req, res){
+    res.render("auth",  {title: "Login Page"})
+})
+
+router.get("/phone-auth", function(req, res){
+    res.render("phone-auth",  {title: "Login Page"})
+})
+router.get("/confirm-otp", function(req, res){
+    res.render("send-otp",  {title: "Login Page"})
+})
 router.get("/login", function(req, res){
-    res.render("login",  {title: "Login Page"})
+    res.render("login",  {title: ""})
 })
 router.get("/register", function(req, res){
     res.render("register", {title: "Signup Page"})
@@ -76,6 +87,42 @@ router.get("/logout", function(req, res){
     req.flash("error_msg", "Failed to login.");
     res.redirect("/")
 })
+
+
+// phone auth route
+
+router.post("/send-otp", async (req, res) => {
+  const { name, phoneNumber } = req.body;
+
+  try {
+    await axios.post("https://api.foodliie.com/api/auth/send-otp", { name, phoneNumber });
+    res.render("send-otp", { phoneNumber, title: "" });
+  } catch (error) {
+    res.status(500).send("Error sending OTP");
+  }
+});
+
+// 🟢 **Step 2: Confirm OTP, Authenticate, and Save Session**
+router.post("/confirm-otp", async (req, res) => {
+  const { phoneNumber, otp } = req.body;
+   console.log(req.body);
+  try {
+    const response = await axios.post("https://api.foodliie.com/api/auth/confirm-otp", {
+      phoneNumber,
+      otp,
+    });
+
+    if (response.data.success) {
+      req.session.currentUser = response.data.user;
+      res.redirect("/");
+    } else {
+      res.send("Invalid OTP");
+    }
+  } catch (error) {
+    res.send("Error verifying OTP");
+  }
+});
+
 
 //google auth route
 

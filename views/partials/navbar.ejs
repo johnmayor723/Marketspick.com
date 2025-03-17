@@ -51,9 +51,12 @@
                                 <div class="dropdown-menu m-0 bg-secondary rounded-0">
                                     <a href="/profile" class="dropdown-item">Profile</a>
                                     
-                                    <a href="/register" class="dropdown-item">Sign up</a>
-                                    <a href="login" class="dropdown-item">Login</a>
-                                    <a href="/logout" class="dropdown-item">Logout</a>
+                                    
+                                    <% if (!session.currentUser) { %>
+  <a href="/auth" class="dropdown-item">Login</a>
+<% } else { %>
+  <a href="/logout" class="dropdown-item">Logout</a>
+<% } %>
                                 </div>
                             </div>
                             <a href="/contact" class="nav-item nav-link">Contact</a>

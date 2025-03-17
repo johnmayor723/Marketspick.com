@@ -30,44 +30,28 @@
             
               
           </h5>
-          
-          
 
           <!-- Form -->
          
             <div style="margin-top:20px">
-                 <strong> <p>
-                Verifying your Phone Number: +234 <%=phoneNumber%>
-                </p></strong>
+                  <a href="/phone-auth" class="btn btn-success w-100 shadow-sm" id="submitBtn" type="submit">
+                Login With your Phone Number
+              </a>
              </div>
-              <!-- Form -->
-          <form action='/confirm-otp'  method="POST">
-             <input
-                type="hidden"
-                class="form-control shadow-sm"
-                id="email"
-                name="phoneNumber"
-                value="<%=phoneNumber%>"
-                required
-                placeholder="Enter your email"
-              >
-                <input
-                type="string"
-                class="form-control shadow-sm"
-                id="email"
-                name="otp"
-                required
-                placeholder="Enter OTP"
-              >
-            <!-- Submit Button -->
-            <div class="text-center">
-             <button class="btn btn-success w-100 shadow-sm" id="submitBtn" type="submit">
-                Send OTP
-              </button>
-            </form>
-              
-            
-
+             <div style="margin-top:20px">
+                  <a href="/login" class="btn btn-success w-100 shadow-sm" id="submitBtn" type="submit">
+                Login With your email
+              </a>
+             </div>
+            <!-- Google Login Form -->
+<form  action="/auth/google" method="get">
+  
+  <div class="text-center mt-3">
+    <button id="googleSignIn" class="btn btn-outline-primary w-100 shadow-sm">
+      <i class="bi bi-google" style="color: #4285F4;"></i> Sign in with Google
+    </button>
+  </div>
+</form>
               
             </div>
           
