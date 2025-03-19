@@ -75,18 +75,21 @@ router.get("/phone-auth", function(req, res){
 router.get("/confirm-otp", function(req, res){
     res.render("send-otp",  {title: "Login Page"})
 })
-router.get("/login", function(req, res){
-    res.render("login",  {title: ""})
-})
-router.get("/register", function(req, res){
-    res.render("register", {title: "Signup Page"})
-})
+// Route for successful password reset
+router.get('/success-password-reset', (req, res) => {
+  req.flash('success_msg', 'Your password has been reset successfully. You can now log in.');
+  res.render('login', { title: 'Login Page' });
+});
 
-router.get("/logout", function(req, res){
-    req.session.currentUser = null;
-    req.flash("error_msg", "Failed to login.");
-    res.redirect("/")
-})
+// Route for password reset errors
+router.get('/error-password-reset', (req, res) => {
+  req.flash('error_msg', 'There was an error resetting your password. Please try again.');
+  res.render('login', { title: 'Login Page' });
+});
+// Separate route to render login page and display messages
+router.get("/login", (req, res) => {
+  res.render("login", { title: "Login Page" });
+});
 
 
 // phone auth route
