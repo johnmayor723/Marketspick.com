@@ -78,7 +78,7 @@ router.get("/confirm-otp", function(req, res){
 // Route for successful password reset
 router.get('/success-password-reset', (req, res) => {
   req.flash('success_msg', 'Your password has been reset successfully. You can now log in.');
-  res.render('login', { title: 'Login Page' });
+  res.redirect('/login');
 });
 
 // Route for password reset errors
