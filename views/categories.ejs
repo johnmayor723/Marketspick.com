@@ -1,0 +1,167 @@
+   <style>
+  /* Category Grid Styling */
+  .category-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+    max-width: 1000px; /* Center the categories within a reasonable width */
+  }
+
+  .category-item {
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    text-decoration: none;
+    color: #2D7B30;
+    font-weight: bold;
+    width: 100px;
+    box-sizing: border-box;
+  }
+
+  /* Responsive Layout */
+  @media (min-width: 768px) {
+    .category-grid {
+      gap: 20px;
+    }
+    .category-item {
+      flex: 1 1 calc(33.33% - 20px); /* Three per row */
+    }
+  }
+
+  @media (min-width: 992px) {
+    .category-item {
+      flex: 1 1 calc(16.66% - 20px); /* Six per row on larger screens */
+    }
+  }
+</style>
+
+   
+        <!-- Single Page Header start -->
+        <div class="container-fluid page-header py-5">
+            <h1 class="text-center text-white display-6">FoodDeck</h1>
+            <ol class="breadcrumb justify-content-center mb-0">
+                <li class="breadcrumb-item"><a href="/">HOME</a></li>
+                
+                <li class="breadcrumb-item active text-white"><%= title %></li>
+            </ol>
+        </div>
+        <!-- Single Page Header End  -->
+
+<!-- Food Categories Start -->
+<h2 style="color: #2D7B30;margin-top:100px; text-align: center; margin-bottom: 20px;">Food Categories</h2>
+<div class="categories-container" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
+
+<!-- Visible Categories (First 6) -->
+<div class="category-grid" id="visibleCategories">
+    <a href="/products/categories/grains-cereals" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#127834;</span> 
+        <span class="category-name">Grains & Cereals</span>
+    </a>
+    <a href="/products/categories/tubers-roots" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#129364;</span>
+        <span class="category-name">Tubers & Roots</span>
+    </a>
+    <a href="/products/categories/vegetables" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#129382;</span>
+        <span class="category-name">Vegetables</span>
+    </a>
+    <a href="/products/categories/fruits" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#127822;</span>
+        <span class="category-name">Fruits</span>
+    </a>
+    <a href="/products/categories/protein-animal-products" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#129385;</span>
+        <span class="category-name">Protein (Animal Products)</span>
+    </a>
+    <a href="/products/categories/dairy-products" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#129370;</span>
+        <span class="category-name">Dairy Products</span>
+    </a>
+</div>
+
+<!-- Hidden Categories (Initially Hidden) -->
+<div class="category-grid" id="hiddenCategories" style="display: none;">
+    <a href="/products/categories/legumes-nuts" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#129372;</span> 
+        <span class="category-name">Legumes & Nuts</span>
+    </a>
+    <a href="/products/categories/oils-fats" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#127856;</span> 
+        <span class="category-name">Oils & Fats</span>
+    </a>
+    <a href="/products/categories/spices-seasonings" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#129475;</span>
+        <span class="category-name">Spices & Seasonings</span>
+    </a>
+    <a href="/products/categories/flour-baking-products" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#127838;</span> 
+        <span class="category-name">Flour & Baking Products</span>
+    </a>
+    <a href="/products/categories/beverages-drinks" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#9749;</span> 
+        <span class="category-name">Beverages & Drinks</span>
+    </a>
+    <a href="/products/categories/snacks-processed-foods" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#127850;</span>
+        <span class="category-name">Snacks & Processed Foods</span>
+    </a>
+</div>
+
+  <!-- Toggle Button -->
+  <button id="toggleButton" onclick="toggleCategories()" style="padding: 10px 20px; background-color: white; border: 2px solid orange; border-radius: 20px; color: green; font-weight: bold; cursor: pointer;">
+    View More Categories
+  </button>
+</div>
+<!-- Food Categories End -->
+
+
+<!-- Featured Products Start -->
+<div style="margin-top:40px;" class="container-fluid py-4">
+    <div class="container py-3">
+        <h2 style="color: #2D7B30; text-align: center; margin-bottom: 30px;"><%= title%> PRODUCTS</h2>
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-4 g-3">
+            <% products.forEach(product => { %>
+                <div class="col">
+                    <a href="/products/<%= product._id %>" class="text-decoration-none">
+                        <div class="card border-orange" style="border-color: #FE9801; margin: 0;">
+                            <img src="<%= product.imageUrl %>" alt="<%= product.name %>" class="card-img-top" style="height: 130px; padding: 2px;">
+                            <div class="card-body" style="background-color:#FAFAFA; padding:7px; height:110px;">
+                                <p class="card-title mb-1" style="font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><%= product.name %></p>
+                                <p class="card-text mb-2" style="color: #FE9801;">&#8358;<%= product.price %></p>
+                                <form action="/cart/<%= product._id %>" method="post">
+                                    <input type="hidden" name="id" value="<%= product._id %>">
+                                    <input type="hidden" name="name" value="<%= product.name %>">
+                                    <input type="hidden" name="imageUrl" value="<%= product.imageUrl %>">
+                                    <input type="hidden" name="price" value="<%= product.price %>">
+                                    <button type="submit" class="btn btn-green w-100" style="background-color: #2D7B30; color: white; margin: 0 3px; font-size: 0.875rem;">
+                                        Add to Cart
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+</div>
+<!-- Featured Products End -->
+
+
+
+<script>
+  function toggleCategories() {
+    const hiddenCategories = document.getElementById('hiddenCategories');
+    const toggleButton = document.getElementById('toggleButton');
+    
+    if (hiddenCategories.style.display === "none") {
+      hiddenCategories.style.display = "flex";
+      toggleButton.textContent = "View Less Categories";
+    } else {
+      hiddenCategories.style.display = "none";
+      toggleButton.textContent = "View More Categories";
+    }
+  }
+</script>
+

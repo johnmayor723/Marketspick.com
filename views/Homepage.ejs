@@ -161,62 +161,61 @@
 <h2 style="color: #2D7B30; margin-top: 100px; text-align: center; margin-bottom: 20px;">Food Categories</h2>
 <div class="categories-container" style="display: flex; flex-direction: column; align-items: center; gap: 15px;">
 
-  <!-- Visible Categories (First 6) -->
-  <div class="category-grid" id="visibleCategories">
-    <a href="/products/categories/farm fresh" class="category-item">
-      <span class="category-icon">&#127793;</span>
-      <span class="category-name">Farm Fresh</span>
+<!-- Visible Categories (First 6) -->
+<div class="category-grid" id="visibleCategories">
+    <a href="/products/categories/grains-cereals" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#127834;</span> 
+        <span class="category-name">Grains & Cereals</span>
     </a>
-    <a href="/products/categories/tubers grains" class="category-item">
-      <span class="category-icon">&#127844;</span>
-      <span class="category-name">Tubers & Grains</span>
+    <a href="/products/categories/tubers-roots" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#129364;</span>
+        <span class="category-name">Tubers & Roots</span>
     </a>
-    <a href="/products/categories/fruits" class="category-item">
-      <span class="category-icon"></span>
-      <span class="category-name">Fruits</span>
+    <a href="/products/categories/vegetables" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#129382;</span>
+        <span class="category-name">Vegetables</span>
     </a>
-    <a href="/products/categories/fish meat" class="category-item">
-      <span class="category-icon">&#129385;</span>
-      <span class="category-name">Fish & Meat</span>
+    <a href="/products/categories/fruits" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#127822;</span>
+        <span class="category-name">Fruits</span>
     </a>
-    <a href="/products/categories/food bundles" class="category-item">
-      <span class="category-icon">&#127828;</span>
-      <span class="category-name">Food Bundles</span>
+    <a href="/products/categories/protein-animal-products" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#129385;</span>
+        <span class="category-name">Protein (Animal Products)</span>
     </a>
-    <a href="/products/categories/ingredients condiments" class="category-item">
-      <span class="category-icon">&#127859;</span>
-      <span class="category-name">Ingredients&<br>Condiments</span>
+    <a href="/products/categories/dairy-products" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#129370;</span>
+        <span class="category-name">Dairy Products</span>
     </a>
-  </div>
+</div>
 
-  <!-- Hidden Categories -->
-  <div class="category-grid" id="hiddenCategories" style="display: none;">
-    <a href="/products/categories/vegetables" class="category-item">
-      <span class="category-icon">&#129385;</span>
-      <span class="category-name">Vegetables</span>
+<!-- Hidden Categories (Initially Hidden) -->
+<div class="category-grid" id="hiddenCategories" style="display: none;">
+    <a href="/products/categories/legumes-nuts" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#129372;</span> 
+        <span class="category-name">Legumes & Nuts</span>
     </a>
-    <a href="/products/categories/drinks" class="category-item">
-      <span class="category-icon">&#127865;</span>
-      <span class="category-name">Drinks</span>
+    <a href="/products/categories/oils-fats" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#127856;</span> 
+        <span class="category-name">Oils & Fats</span>
     </a>
-    <a href="/products/categories/beverages" class="category-item">
-      <span class="category-icon">&#9749;</span>
-      <span class="category-name">Beverages</span>
+    <a href="/products/categories/spices-seasonings" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#129475;</span>
+        <span class="category-name">Spices & Seasonings</span>
     </a>
-    <a href="/products/categories/cereals" class="category-item">
-      <span class="category-icon">&#127838;</span>
-      <span class="category-name">Cereals</span>
+    <a href="/products/categories/flour-baking-products" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#127838;</span> 
+        <span class="category-name">Flour & Baking Products</span>
     </a>
-    <a href="/products/categories/oil products" class="category-item">
-      <span class="category-icon">&#129361;</span>
-      <span class="category-name">Oil Products</span>
+    <a href="/products/categories/beverages-drinks" class="category-item" style="background-color: #f0f8f0;">
+        <span class="category-icon">&#9749;</span> 
+        <span class="category-name">Beverages & Drinks</span>
     </a>
-    <a href="/products/categories/household items" class="category-item">
-      <span class="category-icon">&#128717;</span>
-      <span class="category-name">Household Items</span>
+    <a href="/products/categories/snacks-processed-foods" class="category-item" style="background-color: #fff1e6;">
+        <span class="category-icon">&#127850;</span>
+        <span class="category-name">Snacks & Processed Foods</span>
     </a>
-  </div>
-
+</div>
   <!-- Toggle Button -->
   <button id="toggleButton" onclick="toggleCategories()" style="padding: 10px 20px; background-color: white; border: 2px solid orange; border-radius: 20px; color: green; font-weight: bold; cursor: pointer;">
     View More Categories

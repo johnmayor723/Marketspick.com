@@ -150,21 +150,9 @@ flex-direction: row;
 
   <!-- Navbar Partial -->
   <%- include("partials/navbar") %>
-<!-- Display success message -->
-<% if (success_msg && success_msg.length > 0) { %>
-    <div class="alert alert-success">
-        <%= success_msg %>
-    </div>
-<% } %>
 
-<!-- Display error message -->
-<% if (error_msg && error_msg.length > 0) { %>
-    <div class="alert alert-danger">
-        <%= error_msg %>
-    </div>
-<% } %>
-  <!-- Main Content -->
   <main>
+      
     <%- body %>
   </main>
 

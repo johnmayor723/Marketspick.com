@@ -33,6 +33,28 @@ router.get("/", async (req, res) => {
   }
 });
 
+// get categories
+
+router.get("/products/categories/:category", async (req, res) => {
+  try {
+    const category = req.params.category; // Get the category from the URL
+    const { data: products } = await axios.get(API_URL); // Fetch all products
+
+    // Filter products based on category
+    const filteredProducts = products.filter(product => 
+      product.category.toLowerCase().replace(/[\s&]/g, '-') === category
+    );
+
+    res.render("categories", { 
+      title: category.replace(/-/g, ' ').toUpperCase(), // Format category for display
+      products: filteredProducts 
+    });
+
+  } catch (err) {
+    res.status(500).send("Error loading category products");
+  }
+});
+
 // Auth routes
 router.get("/profile", async (req, res) => {
   try {
