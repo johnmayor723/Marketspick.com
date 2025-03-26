@@ -53,7 +53,8 @@
                                     
                                     
                                     <% if (!session.currentUser) { %>
-  <a href="/auth" class="dropdown-item">Login</a>
+  <a href="/login" class="dropdown-item">Login</a>
+  <a href="/register" class="dropdown-item">Sign up</a>
 <% } else { %>
   <a href="/logout" class="dropdown-item">Logout</a>
 <% } %>
