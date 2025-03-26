@@ -1,0 +1,48 @@
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-4">
+            <div class="card shadow">
+                <div class="card-body">
+                    <!-- Permanent Success Message -->
+                    <div class="alert alert-success">
+                        Email verified successfully. You can login to your account.
+                    </div>
+
+                    <!-- Form Heading -->
+                    <h5 class="card-title text-center mb-3">
+                        Sign in to Foodliie
+                    </h5>
+
+                    <!-- Login Form -->
+                    <form action="/login" method="POST">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email</label>
+                            <input type="email" class="form-control shadow-sm" id="email" name="email" required placeholder="Enter your email">
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control shadow-sm" id="password" name="password" required placeholder="Enter your password">
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button class="btn btn-success w-100 shadow-sm" id="loginBtn" type="submit">
+                            Login
+                        </button>
+                    </form>
+
+                    <p class="mt-3">Don't have an account? <a href="/register">Sign up</a></p>
+                    <p>Forgotten your password? <a href="/reset-password">Click here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add a loader animation when the login button is clicked
+    document.getElementById('loginBtn').addEventListener('click', function (event) {
+        this.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`;
+        this.disabled = true;
+    });
+</script>

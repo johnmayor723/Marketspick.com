@@ -87,8 +87,11 @@ router.get("/profile", async (req, res) => {
     res.render("profile", {title: "Profile Page"})
 })*/
 
-router.get("/auth", function(req, res){
-    res.render("auth",  {title: "Login Page"})
+router.get("/signup2", function(req, res){
+    res.render("signup-1",  {title: "Login Page"})
+})
+router.get("/signin2", function(req, res){
+    res.render("signin-1",  {title: "Login Page"})
 })
 
 router.get("/phone-auth", function(req, res){
@@ -248,7 +251,7 @@ router.post("/register", async (req, res) => {
     if ([200, 201].includes(response.status) && response.data.message) {
       console.log("✅ User registered successfully. Redirecting to login...");
       req.flash("success_msg", response.data.message);
-      return res.redirect("/register");
+      return res.redirect("/signup2");
     }
 
     console.log("⚠ Unexpected response format:", response.data);
