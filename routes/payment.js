@@ -139,7 +139,24 @@ async function processOrderPayment(req, res, finalAmount, id) {
   }
 }
 
+router.post('/create-order', async (req, res) => { try { const orderData = req.body;
 
+const response = await axios.post('https://api.foodliie.com/api/orders/create-order', orderData, {
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    
+    res.status(response.status).json(response.data);
+} catch (error) {
+    console.error('Error creating order:', error.response ? error.response.data : error.message);
+    res.status(error.response?.status || 500).json({
+        message: 'Failed to create order',
+        error: error.response?.data || error.message
+    });
+}
+
+});
 
 // Payment page route
 
@@ -243,13 +260,11 @@ router.post("/process", async (req, res) => {
 
       // Update coupon value
       const updatedValue = activeCoupon.value - discountApplied;
-      const isValid = updatedValue > 0;
 
       await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
         userId,
         couponId: activeCoupon.couponId,
         usedValue: discountApplied,
-        
       });
 
       console.log("Coupon updated successfully.");
@@ -302,25 +317,15 @@ router.post("/process", async (req, res) => {
       console.log(`Activated coupon applied: ${discountApplied}, Final amount: ${finalAmount}`);
 
       // Update coupon value
-      const updatedValue = activatedCoupon.value - discountApplied;
-      const isValid = updatedValue > 0;
-
       await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
         userId,
         couponId: activatedCoupon.couponId,
         usedValue: discountApplied,
-        
       });
 
       console.log("Updated activated coupon value.");
 
-      // Update agent sales
-      await axios.patch(`${API_BASE_URL}/api/agent`, {
-        couponCode: discountCode,
-        amount: finalAmount,
-      });
-
-      return await processOrderPayment(req, res, finalAmount);
+      return await processOrderPayment(req, res, finalAmount, userId);
     }
 
   } catch (error) {
@@ -329,5 +334,6 @@ router.post("/process", async (req, res) => {
     return res.redirect("/cart");
   }
 });
+
 
 module.exports = router;
