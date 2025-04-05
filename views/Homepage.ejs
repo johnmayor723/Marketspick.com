@@ -100,22 +100,19 @@
 
   /* Desktop: Four per row, uniform height and spacing */
   @media (min-width: 992px) {
-    .col {
-      flex: 1 1 calc(25% - 30px); /* Four per row */
-    }
-    .card-img-top {
-      height: 180px; /* Uniform height on desktop */
-      padding: 10px; /* Adds padding around the image */
-      border-radius: 8px; /* Smooth rounding */
-    }
-    .row-cols-1,
-    .row-cols-sm-2,
-    .row-cols-md-3,
-    .row-cols-lg-4 {
-      gap: 30px; /* Larger gap for desktop */
-      margin: 30px auto; /* Proper alignment for desktop */
-    }
+  .col {
+    flex: 1 1 calc(25% - 30px); /* Four per row */
   }
+  .card-img-top {
+    width: 90%; /* Shrinks image within the card */
+    height: 160px; /* Slightly shorter */
+    padding: 10px; /* Space around image */
+    object-fit: contain; /* Prevent stretching */
+    margin: 0 auto; /* Center image horizontally */
+    border-radius: 10px;
+    background-color: #fff; /* Optional: adds contrast behind image */
+  }
+}
 </style>
 <!-- Hero Start -->
 <div class="container-fluid py-5 mb-5 hero-header">
