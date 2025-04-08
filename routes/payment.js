@@ -269,11 +269,6 @@ router.post("/process", async (req, res) => {
 
       console.log("Coupon updated successfully.");
 
-      // Update agent sales
-      await axios.patch(`${API_BASE_URL}/api/agent`, {
-        couponCode: activeCoupon.couponCode,
-        amount: finalAmount,
-      });
 
       return await processOrderPayment(req, res, finalAmount, userId);
     } 
