@@ -1,6 +1,4 @@
-
- <div class="container py-5">
-         <!-- Display success message -->
+    <!-- Display success message -->
     <% if (success_msg.length > 0) { %>
         <div class="alert alert-success">
             <%= success_msg %>
@@ -13,7 +11,9 @@
             <%= error_msg %>
         </div>
     <% } %>
-         <div style="margin-top:40px">
+
+<div class="container py-5">
+    <div style="margin-top:100px">
              <p style="color:white">
                  Arsenal receive Myles Lewis-Skelly referee red card appeal verdict after 'major' Michael Oliver error
 
@@ -27,13 +27,13 @@
           <!-- Form Heading -->
           <h5 class="card-title text-center mb-3">
         
-              Your Markets Pick Account
+              Open an Account with Market Picks.
             
               
           </h5>
 
           <!-- Form -->
-          <form action='/login'  method="POST">
+          <form action="/login" method="POST">
             <div class="mb-3">
               <label for="email" class="form-label">Email</label>
               <input
@@ -61,28 +61,30 @@
             </div>
 
             <!-- Google Sign-in Button -->
-            
-            <!-- Submit Button -->
-            <div class="text-center">
-              <button class="btn btn-success w-100 shadow-sm" id="submitBtn" type="submit">
-                Sign in 
+       <button class="btn btn-success w-100 shadow-sm" id="submitBtn" type="submit">
+                Sign up 
               </button>
-            </form>
-            
           
-              <p>Don't have an account?
-              <a href="/register">Sign Up</a>
+               <p>Don't have an account?
+              <a href="/login">Sign up</a>
               </p>
-          <p>Forgotten your password?
+<p>Forgotten your password?
               <a href="/reset-password">Click here</a>
               </p>
             </div>
+            </div>
           
-
         </div>
       </div>
     </div>
   </div>
 </div>
 
-
+<script>
+  // Add a loader animation when the submit button is clicked
+  submitBtn.addEventListener('click', function (event) {
+    submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`;
+    submitBtn.disabled = true;
+    document.querySelector('form').submit(); // Ensure form submission
+});
+</script>
