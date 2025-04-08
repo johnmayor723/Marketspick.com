@@ -125,11 +125,12 @@
                 <div class="col">
                     <a href="/products/<%= product._id %>" class="text-decoration-none">
                         <div class="card border-orange" style="border-color: #FE9801; margin: 0;">
-                            <<img src="<%= product.imageUrl %>" alt="<%= product.name %>" class="card-img-top p-2" style="height: 130px; object-fit: contain;">
+                            
+                            <img src="<%= product.imageUrl %>" alt="<%= product.name %>" class="card-img-top p-2" style="height: 130px; object-fit: contain;">
                             <div class="card-body" style="background-color:#FAFAFA; padding:7px; height:110px;">
                                 <p class="card-title mb-1" style="font-size: 0.9rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><%= product.name %></p>
                                 <p class="card-text mb-2" style="color: #FE9801;">&#8358;<%= product.price %></p>
-                                <form action="/cart/<%= product._id %>" method="post">
+                                <form "/cart/<%= product._id %>" method="post">
                                     <input type="hidden" name="id" value="<%= product._id %>">
                                     <input type="hidden" name="name" value="<%= product.name %>">
                                     <input type="hidden" name="imageUrl" value="<%= product.imageUrl %>">
