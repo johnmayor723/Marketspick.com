@@ -5,12 +5,12 @@ const nodemailer = require("nodemailer");
 const { generateOrderEmailHTML } = require("../helpers");
 
 const PAYSTACK_SECRET_KEY = "sk_test_d754fb2a648e8d822b09aa425d13fc62059ca08e";
-const API_BASE_URL = "http://api.foodliie.com";
+const API_BASE_URL = "https://api.foodliie.com";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "fooddeck3@gmail.com",
-    pass: "zffe bqjv xqha haln", // Replace with actual password
+    user: "marketpicks723@gmail.com",
+    pass: "yvbqttivjtmvlbhp", // Replace with actual password
   },
 });
 
@@ -45,7 +45,7 @@ async function processOrderPayment(req, res, finalAmount, id) {
       },
 };
     console.log("address payload:",addressPayload)
-    const response = await axios.put("http://api.foodliie.com/api/auth/update-address",  addressPayload, {
+    const response = await axios.put("https://api.foodliie.com/api/auth/update-address",  addressPayload, {
       headers: {
         "Content-Type": "application/json",
       },
@@ -106,11 +106,11 @@ async function processOrderPayment(req, res, finalAmount, id) {
     const paystackData = {
       email,
       amount: finalAmount * 100, // Amount in kobo
-      callback_url: "http://api.foodliie.com/payments/callback",
+      callback_url: "https://api.foodliie.com/payments/callback",
     };
 
     //const response = await axios.post("http://api.foodliie.com/api/order/initialize", {paystackData});
-     const response = await axios.post("http://api.foodliie.com/api/orders/initialize", paystackData);
+     const response = await axios.post("https://api.foodliie.com/api/orders/initialize", paystackData);
     if (response.data) {
       const authorizationUrl = response.data.authUrl;
 
@@ -139,24 +139,7 @@ async function processOrderPayment(req, res, finalAmount, id) {
   }
 }
 
-router.post('/create-order', async (req, res) => { try { const orderData = req.body;
 
-const response = await axios.post('https://api.foodliie.com/api/orders/create-order', orderData, {
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-    
-    res.status(response.status).json(response.data);
-} catch (error) {
-    console.error('Error creating order:', error.response ? error.response.data : error.message);
-    res.status(error.response?.status || 500).json({
-        message: 'Failed to create order',
-        error: error.response?.data || error.message
-    });
-}
-
-});
 
 // Payment page route
 
@@ -165,7 +148,7 @@ router.post("/", async (req, res, next) => {
   console.log("here now:", req.session.currentUser)
 
   if (!req.session.currentUser && req.session.cart) {
-    return res.render("hompage", { cart: [], title: "Homepage" });
+    return res.render("homepage", { cart: [], title: "Homepage" });
   }
 
   try {
@@ -176,9 +159,10 @@ router.post("/", async (req, res, next) => {
     if (!userId) {
       return res.status(401).render("login", { title: "Login Page", message: "Please log in to proceed to checkout." });
     }
+    console.log('making axios call to validare coupon')
 
     // Make the Axios call to validate coupon
-    const { data } = await axios.post("https://api.foodliie.com/api/coupon/validate-coupon", {
+    const { data } = await axios.post("https://api.foodliie.com/api/auth/validate-coupon", {
       userId,
     });
 
@@ -260,15 +244,22 @@ router.post("/process", async (req, res) => {
 
       // Update coupon value
       const updatedValue = activeCoupon.value - discountApplied;
+      const isValid = updatedValue > 0;
 
       await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
         userId,
         couponId: activeCoupon.couponId,
         usedValue: discountApplied,
+        
       });
 
       console.log("Coupon updated successfully.");
 
+      // Update agent sales
+      await axios.patch(`${API_BASE_URL}/api/agent`, {
+        couponCode: activeCoupon.couponCode,
+        amount: finalAmount,
+      });
 
       return await processOrderPayment(req, res, finalAmount, userId);
     } 
@@ -312,15 +303,25 @@ router.post("/process", async (req, res) => {
       console.log(`Activated coupon applied: ${discountApplied}, Final amount: ${finalAmount}`);
 
       // Update coupon value
+      const updatedValue = activatedCoupon.value - discountApplied;
+      const isValid = updatedValue > 0;
+
       await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
         userId,
         couponId: activatedCoupon.couponId,
         usedValue: discountApplied,
+        
       });
 
       console.log("Updated activated coupon value.");
 
-      return await processOrderPayment(req, res, finalAmount, userId);
+      // Update agent sales
+      await axios.patch(`${API_BASE_URL}/api/agent`, {
+        couponCode: discountCode,
+        amount: finalAmount,
+      });
+
+      return await processOrderPayment(req, res, finalAmount);
     }
 
   } catch (error) {
@@ -329,6 +330,5 @@ router.post("/process", async (req, res) => {
     return res.redirect("/cart");
   }
 });
-
 
 module.exports = router;
