@@ -113,12 +113,13 @@ ul.list-unstyled li h5 {
                     </div>
                     <a href="/contact" class="nav-item nav-link">Contact</a>
                 </div>
-               <!-- Desktop Search Form -->
-<form class="d-none d-lg-flex align-items-center me-4" id="desktopSearchForm">
+                <!-- Desktop Search Form -->
+<form class="d-none d-lg-flex align-items-center me-4" id="searchInput1">
     <input class="form-control border-secondary rounded-start" id="desktopSearchInput"
            type="search" placeholder="Search..." aria-label="Search">
     <i class="fas fa-search text-secondary d-flex align-items-center p-2" style="cursor: pointer;"></i>
 </form>
+
                 <!-- Cart + Icons Section -->
                 <div class="d-flex m-3 me-0">
                     <!-- Cart Icon -->
@@ -146,7 +147,7 @@ ul.list-unstyled li h5 {
 <!-- JavaScript for live search API call and modal -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('searchInput, desktopSearchInput');
+        const searchInput = document.getElementById('searchInput');
         const searchResultsModal = new bootstrap.Modal(document.getElementById('searchResultsModal'));
         const searchResultsContent = document.getElementById('searchResultsContent');
         let timeout = null;
@@ -165,6 +166,66 @@ ul.list-unstyled li h5 {
 
         searchInput.addEventListener('input', function () {
             const query = searchInput.value.trim();
+
+            // Only trigger the filtering if at least 3 characters are entered
+            if (query.length >= 3) {
+                // Clear the previous timeout
+                clearTimeout(timeout);
+
+                // Set a new timeout to wait for the user to finish typing
+                timeout = setTimeout(function () {
+                    // Filter the products based on the query
+                    const filteredProducts = allProducts.filter(product => {
+                        return product.name.toLowerCase().includes(query.toLowerCase()) ||
+                               product.description.toLowerCase().includes(query.toLowerCase());
+                    });
+
+                    // Update the modal with filtered results
+                    if (filteredProducts.length > 0) {
+                        let resultsHTML = `<ul class="list-unstyled">` + filteredProducts.map(item => `
+                          <a href="/products/${item._id}">  <li class="d-flex align-items-center py-2">
+                                <img src="${item.imageUrl}" alt="${item.name}" class="product-image" />
+                                <h5 class="ms-3">${item.name}</h5>
+                            </li></a>
+                        `).join('') + `</ul>`;
+
+                        searchResultsContent.innerHTML = resultsHTML;
+                    } else {
+                        searchResultsContent.innerHTML = '<p>No results found.</p>';
+                    }
+
+                    // Show the modal with the results
+                    searchResultsModal.show();
+                }, 500); // Wait 500ms after the user finishes typing
+            } else {
+                // If the query is less than 3 characters, hide the modal
+                searchResultsModal.hide();
+            }
+        });
+    });
+</script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput1');
+        const searchResultsModal = new bootstrap.Modal(document.getElementById('searchResultsModal'));
+        const searchResultsContent = document.getElementById('searchResultsContent');
+        let timeout = null;
+        let allProducts = [];
+
+        // Fetch all products when the page loads
+        fetch('https://api.foodliie.com/api/products')
+            .then(response => response.json())
+            .then(data => {
+                // Store all products for client-side filtering
+                allProducts = data;
+            })
+            .catch(error => {
+                console.error('Error fetching products:', error);
+            });
+
+        searchInput1.addEventListener('input', function () {
+            const query = searchInput1.value.trim();
 
             // Only trigger the filtering if at least 3 characters are entered
             if (query.length >= 3) {
