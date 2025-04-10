@@ -113,7 +113,12 @@ ul.list-unstyled li h5 {
                     </div>
                     <a href="/contact" class="nav-item nav-link">Contact</a>
                 </div>
-
+               <!-- Desktop Search Form -->
+<form class="d-none d-lg-flex align-items-center me-4" id="desktopSearchForm">
+    <input class="form-control border-secondary rounded-start" id="desktopSearchInput"
+           type="search" placeholder="Search..." aria-label="Search">
+    <i class="fas fa-search text-secondary d-flex align-items-center p-2" style="cursor: pointer;"></i>
+</form>
                 <!-- Cart + Icons Section -->
                 <div class="d-flex m-3 me-0">
                     <!-- Cart Icon -->
@@ -141,7 +146,7 @@ ul.list-unstyled li h5 {
 <!-- JavaScript for live search API call and modal -->
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const searchInput = document.getElementById('searchInput');
+        const searchInput = document.getElementById('searchInput, desktopSearchInput');
         const searchResultsModal = new bootstrap.Modal(document.getElementById('searchResultsModal'));
         const searchResultsContent = document.getElementById('searchResultsContent');
         let timeout = null;
