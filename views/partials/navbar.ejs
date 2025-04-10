@@ -1,81 +1,202 @@
-        <!-- Navbar start -->
-        
-        <div class="container-fluid fixed-top">
-            <div class="container topbar bg-primary d-none d-lg-block">
-                <div class="d-flex justify-content-between">
-                    <div class="top-info ps-2">
-                        <small class="me-3"><i class="fas fa-map-marker-alt me-2 text-secondary"></i> <a href="#" class="text-white">F2 Onikan Mall, Onikan, Lagos</a></small>
-                        <small class="me-3"><i class="fas fa-envelope me-2 text-secondary"></i><a href="#" class="text-white">info@marketspick.com</a></small>
-                    </div>
-                    <div class="top-link pe-2">
-                        <a href="/privacy-policy" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
-                        <a href="/return-policy" class="text-white"><small class="text-white mx-2">Terms of Use</small>/</a>
-                        <a href="#" class="text-white"><small class="text-white ms-2">Sales and Refunds</small></a>
-                    </div>
-                </div>
+<style>
+    /* Style for product image */
+.product-image {
+    width: 50px; /* Adjust width of the image */
+    height: 50px; /* Adjust height of the image */
+    object-fit: cover; /* Ensure the image fits within the given dimensions */
+}
+
+/* Style for the unordered list */
+ul.list-unstyled {
+    padding-left: 0;
+    margin: 0;
+}
+
+/* Style for individual list items */
+ul.list-unstyled li {
+    display: flex;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #ddd;
+}
+
+/* Style for product title */
+ul.list-unstyled li h5 {
+    margin-left: 15px;
+    font-size: 16px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* Style for modal content */
+#searchResultsContent {
+    max-height: 400px;
+    overflow-y: auto;
+}
+</style>
+
+<!-- Navbar start -->
+<div class="container-fluid fixed-top">
+    <div class="container topbar bg-primary d-none d-lg-block">
+        <div class="d-flex justify-content-between">
+            <div class="top-info ps-2">
+                <small class="me-3">
+                    <i class="fas fa-map-marker-alt me-2 text-secondary"></i>
+                    <a href="#" class="text-white">F2 Onikan Mall, Onikan, Lagos</a>
+                </small>
+                <small class="me-3">
+                    <i class="fas fa-envelope me-2 text-secondary"></i>
+                    <a href="#" class="text-white">info@marketspick.com</a>
+                </small>
             </div>
-            <div class="container px-0">
-                <nav class="navbar navbar-light bg-white navbar-expand-xl">
-                    <a href="/" class="navbar-brand">
-                        <img height="80" src="/img/Website 250x100px.jpg" alt="Foodeck Logo" />
-                    </a>
-                    <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                        <span class="fa fa-bars text-primary"></span>
-                    </button>
-                    <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
-                        <div class="navbar-nav mx-auto">
-                            <a href="/" class="nav-item nav-link active">Home</a>
-                            <a href="/contact" class="nav-item nav-link">Contact-Us</a>
-                            <a href="/contact" class="nav-item nav-link">About-Us</a>
-                            <a href="" class="nav-item nav-link">Promotions</a>
-                             <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">categories</a>
-                                <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                    <a href="/fruits" class="dropdown-item">fruits</a>
-                                      <a href="/grains" class="dropdown-item">Grain and Tubers</a>
-                                    <a href="fishandmeat" class="dropdown-item">Fish and Meat</a>
-                                    <a href="/oilproducts" class="dropdown-item">Oil Products</a>
-                                </div>
-                            </div>
-                           <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Discover</a>
-                                <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                    <a href="/return-policy" class="dropdown-item">Sales and refund</a>
-                                    
-                                    <a href="/privacy-policy" class="dropdown-item">Privacy policy</a>
-                                    <a href="/" class="dropdown-item">Terms and conditions</a>
-                                </div>
-                            </div>
-                            <div class="nav-item dropdown">
-                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Account</a>
-                                <div class="dropdown-menu m-0 bg-secondary rounded-0">
-                                    <a href="/profile" class="dropdown-item">Profile</a>
-                                    
-                                    
-                                    <% if (!session.currentUser) { %>
-  <a href="/login" class="dropdown-item">Login</a>
-  <a href="/register" class="dropdown-item">Sign up</a>
-<% } else { %>
-  <a href="/logout" class="dropdown-item">Logout</a>
-<% } %>
-                                </div>
-                            </div>
-                            <a href="/contact" class="nav-item nav-link">Contact</a>
-                        </div>
-                        <div class="d-flex m-3 me-0">
-                            <button class="btn-search btn border border-secondary btn-md-square rounded-circle bg-white me-4" data-bs-toggle="modal" data-bs-target="#searchModal"><i class="fas fa-search text-primary"></i></button>
-                            <a href="/cart" class="position-relative me-4 my-auto">
-    <i class="fa fa-shopping-bag fa-2x"></i>
-    <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1" style="top: -5px; left: 15px; height: 20px; min-width: 20px;">
-        <%= session.cart ? session.cart.totalQty : 0 %>
-    </span>
-</a>
-                            <a href="#" class="my-auto">
-                                <i class="fas fa-user fa-2x"></i>
-                            </a>
-                        </div>
-                    </div>
-                </nav>
+            <div class="top-link pe-2">
+                <a href="/privacy-policy" class="text-white"><small class="text-white mx-2">Privacy Policy</small>/</a>
+                <a href="/return-policy" class="text-white"><small class="text-white mx-2">Terms of Use</small>/</a>
+                <a href="#" class="text-white"><small class="text-white ms-2">Sales and Refunds</small></a>
             </div>
         </div>
-        <!-- Navbar End -->
+    </div>
+    <div class="container px-0">
+        <nav class="navbar navbar-light bg-white navbar-expand-xl">
+            <div class="d-flex justify-content-between w-100">
+                <a href="/" class="navbar-brand">
+                    <img height="80" src="/img/Website 250x100px.jpg" alt="Foodeck Logo" />
+                </a>
+                <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
+                    <span class="fa fa-bars text-primary"></span>
+                </button>
+            </div>
+
+            <!-- Search Form Below Logo on Mobile -->
+            <form class="d-block d-lg-none w-100 mt-3" id="searchForm">
+                <div class="d-flex">
+                    <input class="form-control border-secondary rounded-start" id="searchInput"
+                           type="search" placeholder="Search..." aria-label="Search">
+                    <i class="fas fa-search text-secondary d-flex align-items-center p-2" style="cursor: pointer;" id="searchIcon"></i>
+                </div>
+            </form>
+
+            <div class="collapse navbar-collapse bg-white" id="navbarCollapse">
+                <div class="navbar-nav mx-auto">
+                    <a href="/" class="nav-item nav-link active">Home</a>
+                    <a href="/contact" class="nav-item nav-link">Contact-Us</a>
+                    <a href="/contact" class="nav-item nav-link">About-Us</a>
+                    <a href="" class="nav-item nav-link">Promotions</a>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Categories</a>
+                        <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                            <a href="/fruits" class="dropdown-item">Fruits</a>
+                            <a href="/grains" class="dropdown-item">Grain and Tubers</a>
+                            <a href="/fishandmeat" class="dropdown-item">Fish and Meat</a>
+                            <a href="/oilproducts" class="dropdown-item">Oil Products</a>
+                        </div>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Discover</a>
+                        <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                            <a href="/return-policy" class="dropdown-item">Sales and Refund</a>
+                            <a href="/privacy-policy" class="dropdown-item">Privacy Policy</a>
+                            <a href="/" class="dropdown-item">Terms and Conditions</a>
+                        </div>
+                    </div>
+                    <div class="nav-item dropdown">
+                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Account</a>
+                        <div class="dropdown-menu m-0 bg-secondary rounded-0">
+                            <a href="/profile" class="dropdown-item">Profile</a>
+                            <% if (!session.currentUser) { %>
+                                <a href="/login" class="dropdown-item">Login</a>
+                                <a href="/register" class="dropdown-item">Sign up</a>
+                            <% } else { %>
+                                <a href="/logout" class="dropdown-item">Logout</a>
+                            <% } %>
+                        </div>
+                    </div>
+                    <a href="/contact" class="nav-item nav-link">Contact</a>
+                </div>
+
+                <!-- Cart + Icons Section -->
+                <div class="d-flex m-3 me-0">
+                    <!-- Cart Icon -->
+                    <a href="/cart" class="position-relative me-4 my-auto">
+                        <i class="fa fa-shopping-bag fa-2x"></i>
+                        <span class="position-absolute bg-secondary rounded-circle d-flex align-items-center justify-content-center text-dark px-1"
+                            style="top: -5px; left: 15px; height: 20px; min-width: 20px;">
+                            <%= session.cart ? session.cart.totalQty : 0 %>
+                        </span>
+                    </a>
+
+                    <!-- User Icon -->
+                    <a href="#" class="my-auto">
+                        <i class="fas fa-user fa-2x"></i>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+</div>
+<!-- Navbar End -->
+
+
+
+<!-- JavaScript for live search API call and modal -->
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const searchInput = document.getElementById('searchInput');
+        const searchResultsModal = new bootstrap.Modal(document.getElementById('searchResultsModal'));
+        const searchResultsContent = document.getElementById('searchResultsContent');
+        let timeout = null;
+        let allProducts = [];
+
+        // Fetch all products when the page loads
+        fetch('https://api.foodliie.com/api/products')
+            .then(response => response.json())
+            .then(data => {
+                // Store all products for client-side filtering
+                allProducts = data;
+            })
+            .catch(error => {
+                console.error('Error fetching products:', error);
+            });
+
+        searchInput.addEventListener('input', function () {
+            const query = searchInput.value.trim();
+
+            // Only trigger the filtering if at least 3 characters are entered
+            if (query.length >= 3) {
+                // Clear the previous timeout
+                clearTimeout(timeout);
+
+                // Set a new timeout to wait for the user to finish typing
+                timeout = setTimeout(function () {
+                    // Filter the products based on the query
+                    const filteredProducts = allProducts.filter(product => {
+                        return product.name.toLowerCase().includes(query.toLowerCase()) ||
+                               product.description.toLowerCase().includes(query.toLowerCase());
+                    });
+
+                    // Update the modal with filtered results
+                    if (filteredProducts.length > 0) {
+                        let resultsHTML = `<ul class="list-unstyled">` + filteredProducts.map(item => `
+                          <a href="/products/${item._id}">  <li class="d-flex align-items-center py-2">
+                                <img src="${item.imageUrl}" alt="${item.name}" class="product-image" />
+                                <h5 class="ms-3">${item.name}</h5>
+                            </li></a>
+                        `).join('') + `</ul>`;
+
+                        searchResultsContent.innerHTML = resultsHTML;
+                    } else {
+                        searchResultsContent.innerHTML = '<p>No results found.</p>';
+                    }
+
+                    // Show the modal with the results
+                    searchResultsModal.show();
+                }, 500); // Wait 500ms after the user finishes typing
+            } else {
+                // If the query is less than 3 characters, hide the modal
+                searchResultsModal.hide();
+            }
+        });
+    });
+</script>
+<script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+<!-- Navbar End -->

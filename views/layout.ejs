@@ -158,9 +158,26 @@ flex-direction: row;
 
   <!-- Footer Partial -->
   <%- include("partials/footer") %>
+  <!-- Modal for Search Results -->
+<div class="modal fade" id="searchResultsModal" tabindex="-1" aria-labelledby="searchResultsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="searchResultsModalLabel">Search Results</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="searchResultsContent">
+                    <!-- Search results will be injected here -->
+                    <p>No results found.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.19.1/js/mdb.min.js"></script>
   
-  
+
 </body>
 </html>
