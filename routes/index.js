@@ -234,7 +234,7 @@ router.get("/auth/google/callback", async (req, res) => {
 // Register route
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
-  console.log("➡ Register route reached");
+  console.log("Register route reached");
 
   try {
     console.log("➡ Sending request to API with data:", { name, email, password });

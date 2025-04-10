@@ -5,12 +5,26 @@ const nodemailer = require("nodemailer");
 const { generateOrderEmailHTML } = require("../helpers");
 
 const PAYSTACK_SECRET_KEY = "sk_test_d754fb2a648e8d822b09aa425d13fc62059ca08e";
+/*
 const API_BASE_URL = "https://api.foodliie.com";
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: "marketpicks723@gmail.com",
     pass: "yvbqttivjtmvlbhp", // Replace with actual password
+  },
+});*/
+
+const transporter = nodemailer.createTransport({
+  host: 'smtp.mailersend.net', // SMTP server
+  port: 587, // Use port 587 for TLS connection
+  secure: false, // Set to false for TLS connection
+  auth: {
+    user: 'MS_5jbt07@test-86org8e2x8egew13.mlsender.net', // Your SMTP username
+    pass: 'mssp.1l7pSPW.3yxj6ljvwm1ldo2r.NmpWxBh', // Your SMTP password
+  },
+  tls: {
+    rejectUnauthorized: false, // Disable certificate validation if needed
   },
 });
 
