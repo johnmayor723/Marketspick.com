@@ -80,11 +80,3 @@
   </div>
 </div>
 
-<script>
-  // Add a loader animation when the submit button is clicked
-  submitBtn.addEventListener('click', function (event) {
-    submitBtn.innerHTML = `<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Loading...`;
-    submitBtn.disabled = true;
-    document.querySelector('form').submit(); // Ensure form submission
-});
-</script>
