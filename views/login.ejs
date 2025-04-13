@@ -1,16 +1,4 @@
-    <!-- Display success message -->
-    <% if (success_msg.length > 0) { %>
-        <div class="alert alert-success">
-            <%= success_msg %>
-        </div>
-    <% } %>
 
-    <!-- Display error message -->
-    <% if (error_msg.length > 0) { %>
-        <div class="alert alert-danger">
-            <%= error_msg %>
-        </div>
-    <% } %>
 
 <div class="container py-5">
     <div style="margin-top:100px">
@@ -28,7 +16,19 @@
           <h5 class="card-title text-center mb-3">
         
               Open an Account with Market Picks.
-            
+                <!-- Display success message -->
+    <% if (success_msg.length > 0) { %>
+        <div class="alert alert-success">
+            <%= success_msg %>
+        </div>
+    <% } %>
+
+    <!-- Display error message -->
+    <% if (error_msg.length > 0) { %>
+        <div class="alert alert-danger">
+            <%= error_msg %>
+        </div>
+    <% } %>
               
           </h5>
 
@@ -66,7 +66,7 @@
               </button>
           
                <p>Don't have an account?
-              <a href="/login">Sign up</a>
+              <a href="/register">Sign up</a>
               </p>
 <p>Forgotten your password?
               <a href="/reset-password">Click here</a>

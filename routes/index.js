@@ -232,6 +232,7 @@ router.get("/auth/google/callback", async (req, res) => {
 });
 
 // Register route
+// Register route
 router.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   console.log("Register route reached");
@@ -247,10 +248,16 @@ router.post("/register", async (req, res) => {
 
     console.log("✅ Response received:", response.status, response.data);
 
-    // ✅ Check for success message instead of user field
-    if ([200, 201].includes(response.status) && response.data.message) {
+    const { message } = response.data;
+
+    if ([200, 201].includes(response.status) && message) {
+      if (message.toLowerCase().includes("email already registered")) {
+        console.log("⚠ Email already registered. Rendering signup3...");
+        return res.render("signup3", { email, title:"Sign Up" });
+      }
+
       console.log("✅ User registered successfully. Redirecting to login...");
-      req.flash("success_msg", response.data.message);
+      req.flash("success_msg", message);
       return res.redirect("/signup2");
     }
 
@@ -269,11 +276,15 @@ router.post("/register", async (req, res) => {
     }
 
     const errorMessage = error.response?.data?.error || "Registration failed. Please try again.";
+
+    if (errorMessage.toLowerCase().includes("email already registered")) {
+      return res.render("signup3", { email });
+    }
+
     req.flash("error_msg", errorMessage);
     return res.redirect("/register");
   }
 });
-
 //login route
 
 router.post("/login", async (req, res) => {
