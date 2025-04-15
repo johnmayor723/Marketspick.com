@@ -36,6 +36,7 @@ router.get("/", async (req, res) => {
 // get categories
 
 router.get("/products/categories/:category", async (req, res) => {
+    console.log("reached category route")
   try {
     const category = req.params.category; // Get the category from the URL
     const { data: products } = await axios.get(API_URL); // Fetch all products
@@ -44,7 +45,7 @@ router.get("/products/categories/:category", async (req, res) => {
     const filteredProducts = products.filter(product => 
       product.category.toLowerCase().replace(/[\s&]/g, '-') === category
     );
-
+     console.log(filteredProducts);
     res.render("categories", { 
       title: category.replace(/-/g, ' ').toUpperCase(), // Format category for display
       products: filteredProducts 

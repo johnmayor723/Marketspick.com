@@ -156,8 +156,62 @@ async function processOrderPayment(req, res, finalAmount, id) {
 
 
 // Payment page route
+// Payment page route
+router.post("/", async (req, res) => {
+  const amount = req.body.amount;
+  const user = req.session.currentUser;
+  const cart = req.session.cart || [];
 
-router.post("/", async (req, res, next) => {
+  // Log current user session
+  console.log("Current user session:", user);
+
+  // Check if user is logged in and has a cart
+  if (!user || !cart.length) {
+    console.log("User not logged in or cart is empty.");
+    return res.render("homepage", { cart: [], title: "Homepage" });
+  }
+
+  const userId = user.userId;
+
+  // Check if user ID is present
+  if (!userId) {
+    console.log("User ID missing in session.");
+    return res.status(401).render("login", {
+      title: "Login Page",
+      message: "Please log in to proceed to checkout.",
+    });
+  }
+
+  try {
+    console.log(`Validating coupon for user ID: ${userId}`);
+
+    const { data } = await axios.post("https://api.foodliie.com/api/auth/validate-coupon", {
+      userId,
+    });
+
+    const couponValue = data.value || 0;
+    console.log("Coupon validation response:", data);
+
+    const template = couponValue > 0 ? "checkout1" : "checkout";
+
+    return res.render(template, {
+      amount,
+      couponValue,
+      title: "Payment Page" + (couponValue > 0 ? " (Discount Applied)" : ""),
+    });
+
+  } catch (error) {
+    console.error("Coupon validation error:", error.message);
+
+    return res.render("checkout", {
+      amount,
+      couponValue: 0,
+      title: "Payment Page",
+      error_msg: "Unable to validate coupon. Please try again later.",
+    });
+  }
+});
+/*router.post("/", async (req, res, next) => {
   const amount = req.body.amount;
   console.log("here now:", req.session.currentUser)
 
@@ -199,7 +253,7 @@ router.post("/", async (req, res, next) => {
       error_msg: "Unable to validate coupon. Please try again later.",
     });
   }
-});
+});*/
 
 // Callback route
 router.get("/callback", async (req, res) => {
