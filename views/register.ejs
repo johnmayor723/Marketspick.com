@@ -33,55 +33,77 @@
         </div>
     <% } %>
 
-          <!-- Form -->
-          <form action="/register" method="POST">
-            <div class="mb-3">
-              <label for="email" class="form-label">Email</label>
-              <input
-                type="email"
-                class="form-control shadow-sm"
-                id="email"
-                name="email"
-                required
-                placeholder="Enter your email"
-              >
-            </div>
-            
-              <div class="mb-3">
-                <label for="name" class="form-label">Full Name</label>
-                <input
-                  type="text"
-                  class="form-control shadow-sm"
-                  id="name"
-                  name="name"
-                  required
-                  placeholder="Enter your full name"
-                >
-              </div>
-            
-            <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
-              <input
-                type="password"
-                class="form-control shadow-sm"
-                id="password"
-                name="password"
-                required
-                placeholder="Enter your password"
-              >
-            </div>
+<!-- Form -->
+<form action="/register" method="POST" onsubmit="return validatePasswords()">
+  <div class="mb-3">
+    <label for="email" class="form-label">Email</label>
+    <input
+      type="email"
+      class="form-control shadow-sm"
+      id="email"
+      name="email"
+      required
+      placeholder="Enter your email"
+    >
+  </div>
+  
+  <div class="mb-3">
+    <label for="name" class="form-label">Full Name</label>
+    <input
+      type="text"
+      class="form-control shadow-sm"
+      id="name"
+      name="name"
+      required
+      placeholder="Enter your full name"
+    >
+  </div>
+  
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <div class="input-group">
+      <input
+        type="password"
+        class="form-control shadow-sm"
+        id="password"
+        name="password"
+        required
+        placeholder="Enter your password"
+      >
+      <button type="button" class="btn btn-outline-secondary" onclick="toggleVisibility('password')">Show</button>
+    </div>
+  </div>
 
-            <!-- Google Sign-in Button -->
-       <button class="btn btn-success w-100 shadow-sm" id="submitBtn" type="submit">
-                Sign up 
-              </button>
-          
-               <p>Already have an account?
-              <a href="/login">Sign in</a>
-              </p>
-<p>Forgotten your password?
-              <a href="/reset-password">Click here</a>
-              </p>
+  <div class="mb-3">
+    <label for="confirmPassword" class="form-label">Confirm Password</label>
+    <div class="input-group">
+      <input
+        type="password"
+        class="form-control shadow-sm"
+        id="confirmPassword"
+        name="confirmPassword"
+        required
+        placeholder="Confirm your password"
+      >
+      <button type="button" class="btn btn-outline-secondary" onclick="toggleVisibility('confirmPassword')">Show</button>
+    </div>
+    <small id="passwordError" class="text-danger d-none">Passwords do not match.</small>
+  </div>
+
+  <!-- Submit Button -->
+  <button class="btn btn-success w-100 shadow-sm" id="submitBtn" type="submit">
+    Sign up 
+  </button>
+
+  <p>Already have an account?
+    <a href="/login">Sign in</a>
+  </p>
+  <p>Forgotten your password?
+    <a href="/reset-password">Click here</a>
+  </p>
+</form>
+
+
             </div>
             </div>
           
@@ -98,4 +120,25 @@
     submitBtn.disabled = false;
     document.querySelector('form').submit(); // Ensure form submission
 });
+</script>
+<!-- Password Validation Script -->
+<script>
+  function validatePasswords() {
+    const password = document.getElementById('password').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    const errorMsg = document.getElementById('passwordError');
+
+    if (password !== confirm) {
+      errorMsg.classList.remove('d-none');
+      return false;
+    } else {
+      errorMsg.classList.add('d-none');
+      return true;
+    }
+  }
+
+  function toggleVisibility(id) {
+    const field = document.getElementById(id);
+    field.type = field.type === 'password' ? 'text' : 'password';
+  }
 </script>
