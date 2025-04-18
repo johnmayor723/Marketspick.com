@@ -17,7 +17,7 @@
         <!-- Active Coupon Alert -->
         <div class="alert alert-info alert-dismissible fade show" role="alert">
             <strong>You have an active coupon!</strong><br>
-            Applied 20% discount of ₦<%= couponValue %>.
+            Applied 20% discount of ₦<%= discount%>.
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
 
@@ -60,7 +60,7 @@
                                 <tr>
                                     <td>
                                         <div class="form-item my-3">
-                                            <label class="form-label text-dark">Discount Applied: ₦<%= couponValue %></label>
+                                            <label class="form-label text-dark">Discount Applied: ₦<%= discount %></label>
                                             <input type="hidden" name="couponValue" value="<%= couponValue %>">
                                         </div>
                                     </td>

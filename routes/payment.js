@@ -5,8 +5,8 @@ const nodemailer = require("nodemailer");
 const { generateOrderEmailHTML } = require("../helpers");
 
 const PAYSTACK_SECRET_KEY = "sk_test_d754fb2a648e8d822b09aa425d13fc62059ca08e";
-/*
 const API_BASE_URL = "https://api.foodliie.com";
+/*
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
@@ -76,14 +76,14 @@ async function processOrderPayment(req, res, finalAmount, id) {
 
     // Email Options
     const userEmailOptions = {
-      from: '"FoodDeck" <fooddeck3@gmail.com>',
+      from: '"Market Picks" <MS_5jbt07@test-86org8e2x8egew13.mlsender.net>',
       to: email,
       subject: "Order Confirmation - FoodDeck",
       html: generateOrderEmailHTML(cart, orderPayload),
     };
 
     const adminEmailOptions = {
-      from: '"FoodDeck" <fooddeck3@gmail.com>',
+     from: '"Market Picks" <MS_5jbt07@test-86org8e2x8egew13.mlsender.net>',
       to: "fooddeck3@gmail.com",
       subject: "New Order Notification - FoodDeck",
       html: generateOrderEmailHTML(cart, orderPayload, true),
@@ -156,62 +156,8 @@ async function processOrderPayment(req, res, finalAmount, id) {
 
 
 // Payment page route
-// Payment page route
-router.post("/", async (req, res) => {
-  const amount = req.body.amount;
-  const user = req.session.currentUser;
-  const cart = req.session.cart || [];
 
-  // Log current user session
-  console.log("Current user session:", user);
-
-  // Check if user is logged in and has a cart
-  if (!user || !cart.length) {
-    console.log("User not logged in or cart is empty.");
-    return res.render("homepage", { cart: [], title: "Homepage" });
-  }
-
-  const userId = user.userId;
-
-  // Check if user ID is present
-  if (!userId) {
-    console.log("User ID missing in session.");
-    return res.status(401).render("login", {
-      title: "Login Page",
-      message: "Please log in to proceed to checkout.",
-    });
-  }
-
-  try {
-    console.log(`Validating coupon for user ID: ${userId}`);
-
-    const { data } = await axios.post("https://api.foodliie.com/api/auth/validate-coupon", {
-      userId,
-    });
-
-    const couponValue = data.value || 0;
-    console.log("Coupon validation response:", data);
-
-    const template = couponValue > 0 ? "checkout1" : "checkout";
-
-    return res.render(template, {
-      amount,
-      couponValue,
-      title: "Payment Page" + (couponValue > 0 ? " (Discount Applied)" : ""),
-    });
-
-  } catch (error) {
-    console.error("Coupon validation error:", error.message);
-
-    return res.render("checkout", {
-      amount,
-      couponValue: 0,
-      title: "Payment Page",
-      error_msg: "Unable to validate coupon. Please try again later.",
-    });
-  }
-});
-/*router.post("/", async (req, res, next) => {
+router.post("/", async (req, res, next) => {
   const amount = req.body.amount;
   console.log("here now:", req.session.currentUser)
 
@@ -233,15 +179,29 @@ router.post("/", async (req, res) => {
     const { data } = await axios.post("https://api.foodliie.com/api/auth/validate-coupon", {
       userId,
     });
+    
+    const couponValue = data.coupon.value || 0; // Get coupon value, default to 0 if none is returned
+console.log("coupon value:", couponValue);
 
-    const couponValue = data.value || 0; // Get coupon value, default to 0 if none is returned
+// Determine the template to render
+const template = couponValue > 0 ? "checkout2" : "checkout";
+
+// Render the appropriate checkout page
+res.render(template, {
+  amount,
+  couponValue,
+  discount: amount*20/100,
+  title: "Payment Page",
+});
+
+   /* const couponValue = data.value || 0; // Get coupon value, default to 0 if none is returned
     console.log("coupon value:", couponValue)
     // Render the checkout page with the coupon value
     res.render("checkout", {
       amount,
       couponValue,
       title: "Payment Page",
-    });
+    });*/
   } catch (error) {
     console.error("Error validating coupon:", error.message);
 
@@ -253,7 +213,7 @@ router.post("/", async (req, res) => {
       error_msg: "Unable to validate coupon. Please try again later.",
     });
   }
-});*/
+});
 
 // Callback route
 router.get("/callback", async (req, res) => {
@@ -290,7 +250,7 @@ router.post("/process", async (req, res) => {
     console.log("Discount code provided:", discountCode || "None");
 
     // Step 1: Check for active coupon
-    const couponResponse = await axios.post(`${API_BASE_URL}/api/auth/validate-coupon`, { userId });
+    const couponResponse = await axios.post('https://api.foodliie.com/api/auth/validate-coupon', { userId });
     console.log("Coupon validation response:", couponResponse.data);
 
     const activeCoupon = couponResponse.data?.coupon;
@@ -335,7 +295,7 @@ router.post("/process", async (req, res) => {
       // Case 3: No active coupon, but discountCode is provided → Verify and activate
       console.log("No active coupon, verifying discount code:", discountCode);
 
-      const verifyResponse = await axios.post("http://api.foodliie.com/api/agent/verify-couponCode", {
+      const verifyResponse = await axios.post("https://api.foodliie.com/api/agent/verify-couponCode", {
         couponCode: discountCode,
       });
 
