@@ -13,7 +13,7 @@
 <div class="container-fluid py-5">
     <div class="container py-5">
         <h1 class="mb-4">Billing Details</h1>
-        <form action="/payments/process" method="POST" id="orderForm">
+         <form action="/payments/process" method="POST" id="orderForm">
             <div class="row g-5">
                 <div class="col-md-12 col-lg-6 col-xl-7">
                     <div class="form-item w-100">
@@ -51,17 +51,10 @@
                                 <!-- Discount Section -->
                                 <tr>
                                     <td>
-                                        <% if (couponValue && couponValue > 0) { %>
-                                            <div class="form-item my-3">
-                                                <label class="form-label text-dark">Discount Applied: ₦<%= couponValue %></label>
-                                                <input type="hidden" name="couponValue" value="<%= couponValue %>">
-                                            </div>
-                                        <% } else { %>
-                                            <div class="form-item my-3">
-                                                <label class="form-label text-dark">Enter Discount Code</label>
-                                                <input type="text" class="form-control" name="discountCode" id="discountCode">
-                                            </div>
-                                        <% } %>
+                                        <div class="form-item my-3">
+                                            <label class="form-label text-dark">Discount Applied: ₦<%=  %></label>
+                                            <input type="hidden" name="couponValue" value="<%= couponValue %>">
+                                        </div>
                                     </td>
                                 </tr>
                                 <!-- Adjusted Amount -->
@@ -74,7 +67,20 @@
                             </tbody>
                         </table>
                     </div>
-            
+
+                    <!-- Direct Bank Transfer -->
+                    <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                        <div class="col-12">
+                            <div class="form-check text-start my-3">
+
+                                <label class="form-check-label" for="transfer1"></label>
+                            </div>
+                 <p class="text-start text-dark">Click on the checkbox below to select payment on delivery. Your order will be processed once it's confirmed."
+                 </p>
+                        </div>
+                    </div>
+
+                    <!-- Cash on Delivery -->
                     <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
                         <div class="col-12">
                             <div class="form-check text-start my-3">
@@ -83,13 +89,15 @@
                             </div>
                         </div>
                     </div>
-                
+
+                    <!-- Place Order -->
                     <div class="row g-4 text-center align-items-center justify-content-center pt-4">
                         <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place Order</button>
                     </div>
                 </div>
             </div>
         </form>
+
 
         <script>
             const totalAmount = parseFloat("<%= amount %>");
