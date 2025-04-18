@@ -1,5 +1,18 @@
         <!-- Single Page Header start -->
         <div class="container-fluid page-header py-5">
+                <!-- Display success message -->
+    <% if (success_msg.length > 0) { %>
+        <div class="alert alert-success">
+            <%= success_msg %>
+        </div>
+    <% } %>
+
+    <!-- Display error message -->
+    <% if (error_msg.length > 0) { %>
+        <div class="alert alert-danger">
+            <%= error_msg %>
+        </div>
+    <% } %>
             <h1 class="text-center text-white display-6"></h1>
             <ol class="breadcrumb justify-content-center mb-0">
                 <li class="breadcrumb-item"><a href="/">Home</a></li>

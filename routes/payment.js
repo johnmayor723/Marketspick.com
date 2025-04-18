@@ -29,11 +29,11 @@ const transporter = nodemailer.createTransport({
 });*/
 
 // Payment function
-async function processOrderPayment(req, res, finalAmount, id) {
+async function processOrderPayment(req, res, finalAmount) {
   try {
     const { name, address, mobile, email, ordernotes, paymentmethod } = req.body;
     const cart = req.session.cart;
-    
+
     const orderPayload = {
       name,
       address,
@@ -44,46 +44,51 @@ async function processOrderPayment(req, res, finalAmount, id) {
       paymentmethod,
       status: "processing", // Default order status
     };
-    console.log("order payload:",orderPayload)
- // Address update function 
-  const updateAddress = async (dataMobile, dataAddress) => {
-  try {
-    const addressPayload = {
-  userId: id,
-  address:{
-  mobile: dataMobile,
-  hnumber: 1,
-  street: dataAddress,
-  city: "Lagos",
-  state: "Lagos",
-      },
-};
-    console.log("address payload:",addressPayload)
-    const response = await axios.put("https://api.foodliie.com/api/auth/update-address",  addressPayload, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
 
-    console.log("Address updated successfully:", response.data);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating address:", error.response?.data || error.message);
-    throw error;
-  }
-};
+    console.log("order payload:", orderPayload);
 
+    // Address update function
+    const updateAddress = async (id, dataMobile, dataAddress) => {
+      try {
+        const addressPayload = {
+          userId: id,
+          address: {
+            mobile: dataMobile,
+            hnumber: 1,
+            street: dataAddress,
+            city: "Lagos",
+            state: "Lagos",
+          },
+        };
+        console.log("address payload:", addressPayload);
+        const response = await axios.put(
+          "https://api.foodliie.com/api/auth/update-address",
+          addressPayload,
+          {
+            headers: {
+              "Content-Type": "application/json",
+            }
+          }
+        );
+
+        console.log("Address updated successfully:", response.data);
+        return response.data;
+      } catch (error) {
+        console.error("Error updating address:", error.response?.data || error.message);
+        throw error;
+      }
+    };
 
     // Email Options
     const userEmailOptions = {
-      from: '"Market Picks" <MS_5jbt07@test-86org8e2x8egew13.mlsender.net>',
+      from: '"Market Picks" <marketpicks723@gmail.com>',
       to: email,
       subject: "Order Confirmation - FoodDeck",
       html: generateOrderEmailHTML(cart, orderPayload),
     };
 
     const adminEmailOptions = {
-     from: '"Market Picks" <MS_5jbt07@test-86org8e2x8egew13.mlsender.net>',
+      from: '"Market Picks" <marketpicks723@gmail.com>',
       to: "fooddeck3@gmail.com",
       subject: "New Order Notification - FoodDeck",
       html: generateOrderEmailHTML(cart, orderPayload, true),
@@ -98,8 +103,8 @@ async function processOrderPayment(req, res, finalAmount, id) {
         const orderResponse = await axios.post(`${API_BASE_URL}/api/orders`, orderPayload);
         console.log(orderResponse.data);
 
-        // Update user address only if order is successful
-        await updateAddress( mobile, address );
+        // Update user address
+        await updateAddress(req.session.currentUser.userId, mobile, address);
 
         // Send emails
         await transporter.sendMail(userEmailOptions);
@@ -108,7 +113,7 @@ async function processOrderPayment(req, res, finalAmount, id) {
         // Clear the cart and redirect to success page
         req.session.cart = null;
         req.flash("success_msg", "Order placed successfully with cash on delivery!");
-        return res.redirect("/");
+        return res.redirect("/success");
       } catch (error) {
         console.error("Error posting order to external server:", error);
         req.flash("error_msg", "Order processing failed. Please try again.");
@@ -123,8 +128,8 @@ async function processOrderPayment(req, res, finalAmount, id) {
       callback_url: "https://api.foodliie.com/payments/callback",
     };
 
-    //const response = await axios.post("http://api.foodliie.com/api/order/initialize", {paystackData});
-     const response = await axios.post("https://api.foodliie.com/api/orders/initialize", paystackData);
+    const response = await axios.post("https://api.foodliie.com/api/orders/initialize", paystackData);
+
     if (response.data) {
       const authorizationUrl = response.data.authUrl;
 
@@ -132,8 +137,8 @@ async function processOrderPayment(req, res, finalAmount, id) {
       const orderResponse = await axios.post(`${API_BASE_URL}/api/orders`, orderPayload);
       console.log(orderResponse.data);
 
-      // Update user address only if order is successful
-      await updateAddress(mobile, address );
+      // Update user address
+      await updateAddress(req.session.currentUser.userId, mobile, address);
 
       // Send emails
       await transporter.sendMail(userEmailOptions);
@@ -152,7 +157,6 @@ async function processOrderPayment(req, res, finalAmount, id) {
     return res.redirect("/cart");
   }
 }
-
 
 
 // Payment page route
@@ -194,14 +198,7 @@ res.render(template, {
   title: "Payment Page",
 });
 
-   /* const couponValue = data.value || 0; // Get coupon value, default to 0 if none is returned
-    console.log("coupon value:", couponValue)
-    // Render the checkout page with the coupon value
-    res.render("checkout", {
-      amount,
-      couponValue,
-      title: "Payment Page",
-    });*/
+
   } catch (error) {
     console.error("Error validating coupon:", error.message);
 
@@ -343,11 +340,7 @@ router.post("/process", async (req, res) => {
 
       console.log("Updated activated coupon value.");
 
-      // Update agent sales
-      await axios.patch(`${API_BASE_URL}/api/agent`, {
-        couponCode: discountCode,
-        amount: finalAmount,
-      });
+
 
       return await processOrderPayment(req, res, finalAmount);
     }

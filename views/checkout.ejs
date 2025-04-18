@@ -16,6 +16,7 @@
         <form action="/payments/process" method="POST" id="orderForm">
             <div class="row g-5">
                 <div class="col-md-12 col-lg-6 col-xl-7">
+                    <!-- Billing fields here (unchanged) -->
                     <div class="form-item w-100">
                         <label class="form-label my-3">Name<sup>*</sup></label>
                         <input type="text" class="form-control" name="name" required>
@@ -36,7 +37,9 @@
                         <textarea name="ordernotes" class="form-control" spellcheck="false" cols="30" rows="11" placeholder="Order Notes (Optional)"></textarea>
                     </div>
                 </div>
+
                 <div class="col-md-12 col-lg-6 col-xl-5">
+                    <!-- Order summary table and discount (unchanged) -->
                     <div class="table-responsive">
                         <table class="table">
                             <tbody>
@@ -48,7 +51,6 @@
                                         </div>
                                     </td>
                                 </tr>
-                                <!-- Discount Section -->
                                 <tr>
                                     <td>
                                         <% if (couponValue && couponValue > 0) { %>
@@ -64,7 +66,6 @@
                                         <% } %>
                                     </td>
                                 </tr>
-                                <!-- Adjusted Amount -->
                                 <tr>
                                     <td class="py-5">
                                         <p class="mb-0 text-dark">Amount After Discount: ₦<span id="discountedAmount"><%= amount %></span>.00</p>
@@ -74,26 +75,39 @@
                             </tbody>
                         </table>
                     </div>
-      <!-- Direct Bank Transfer -->
-                    <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
-                        <div class="col-12">
-                            <div class="form-check text-start my-3">
 
-                                <label class="form-check-label" for="transfer1"></label>
-                            </div>
-                 <p class="text-start text-dark">Click on the checkbox below to select payment on delivery. Your order will be processed once it's confirmed."
-                 </p>
-                        </div>
-                    </div>
+                    <!-- Disabled Bank Transfer -->
                     <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
                         <div class="col-12">
                             <div class="form-check text-start my-3">
-                                <input type="checkbox" class="form-check-input bg-primary border-0" id="delivery1" name="paymentmethod" value="cashondelivery">
-                                <label class="form-check-label" for="delivery1">Payment On Delivery</label>
+                                <input type="checkbox" class="form-check-input bg-primary border-0" id="transfer1" name="paymentmethod" value="banktransfer" disabled>
+                                <label class="form-check-label text-muted" for="transfer1">Direct Bank Transfer (Unavailable)</label>
+                            </div>
+                            <p class="text-start text-muted">This option is currently unavailable.</p>
+                        </div>
+                    </div>
+
+                    <!-- Cash on Delivery (enabled and pre-selected) -->
+                    <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                        <div class="col-12">
+                            <div class="form-check text-start my-3">
+                                <input type="checkbox" class="form-check-input bg-primary border-0" id="delivery1" name="paymentmethod" value="cashondelivery" checked>
+                                <label class="form-check-label" for="delivery1">Cash On Delivery</label>
                             </div>
                         </div>
                     </div>
-               
+
+                    <!-- Disabled Card Payment -->
+                    <div class="row g-4 text-center align-items-center justify-content-center border-bottom py-3">
+                        <div class="col-12">
+                            <div class="form-check text-start my-3">
+                                <input type="checkbox" class="form-check-input bg-primary border-0" id="paypal1" name="paymentmethod" value="cardpayment" disabled>
+                                <label class="form-check-label text-muted" for="paypal1">Card Payment (Unavailable)</label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Place Order Button -->
                     <div class="row g-4 text-center align-items-center justify-content-center pt-4">
                         <button type="submit" class="btn border-secondary py-3 px-4 text-uppercase w-100 text-primary">Place Order</button>
                     </div>
@@ -109,29 +123,23 @@
             const discountedAmountDisplay = document.getElementById("discountedAmount");
             const hiddenDiscountedAmount = document.getElementById("hiddenDiscountedAmount");
 
-            // Update the discounted amount
             function updateDiscountedAmount() {
                 let discountedAmount = totalAmount;
-
                 if (couponValue && couponValue >= totalAmount * 0.2) {
-                    discountedAmount = totalAmount * 0.8; // Apply 20% discount
+                    discountedAmount = totalAmount * 0.8;
                 } else if (couponValue > 0) {
-                    discountedAmount = totalAmount - couponValue; // Deduct remaining coupon value
+                    discountedAmount = totalAmount - couponValue;
                 }
-
-                discountedAmount = Math.max(discountedAmount, 0); // Ensure amount doesn't go below zero
-
+                discountedAmount = Math.max(discountedAmount, 0);
                 totalAmountDisplay.textContent = totalAmount.toFixed(2);
                 discountedAmountDisplay.textContent = discountedAmount.toFixed(2);
                 hiddenDiscountedAmount.value = discountedAmount.toFixed(2);
             }
 
-            // Add event listener to discount code input
             if (discountCodeInput) {
                 discountCodeInput.addEventListener("input", updateDiscountedAmount);
             }
 
-            // Initialize discount values on page load
             updateDiscountedAmount();
         </script>
     </div>

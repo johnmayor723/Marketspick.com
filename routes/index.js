@@ -320,6 +320,18 @@ router.post("/login", async (req, res) => {
   }
 });
 
+router.get("/logout", (req, res) => {
+  // Remove only the currentUser property from the session
+  delete req.session.currentUser;
+
+  req.flash("success_msg", "You have been logged out successfully.");
+  res.redirect("/login");
+});
+// Success page route
+router.get("/success", (req, res) => {
+  res.render("success"); // Make sure you have success.ejs in your views folder
+});
+
 router.post("/request-password-reset", async (req, res) => {
     const { email } = req.body;
 
