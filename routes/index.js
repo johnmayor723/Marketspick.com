@@ -83,6 +83,11 @@ router.get("/profile", async (req, res) => {
     res.redirect("/");
   }
 });
+router.get("/token-error", (req, res) => {
+  res.render("token-error", {
+    title: "Email Verification Failed"
+  });
+});
 
 /*router.get("/profile", function(req, res){
     res.render("profile", {title: "Profile Page"})
