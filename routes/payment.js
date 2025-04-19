@@ -58,7 +58,7 @@ async function processOrderPayment(req, res, finalAmount) {
             street: dataAddress,
             city: "Lagos",
             state: "Lagos",
-          },
+          };
         };
         console.log("address payload:", addressPayload);
         const response = await axios.put(
