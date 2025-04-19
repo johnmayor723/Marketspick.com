@@ -59,7 +59,7 @@ async function processOrderPayment(req, res, finalAmount) {
             city: "Lagos",
             state: "Lagos",
           };
-        };
+        
         console.log("address payload:", addressPayload);
         const response = await axios.put(
           "https://api.foodliie.com/api/auth/update-address",
