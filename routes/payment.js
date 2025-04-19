@@ -192,7 +192,7 @@ const template = couponValue > 0 ? "checkout2" : "checkout";
 
 // Render the appropriate checkout page
 res.render(template, {
-  amount:amount+3000,
+  amount,
   couponValue,
   discount: amount*20/100,
   title: "Payment Page",
@@ -344,7 +344,7 @@ router.post("/process", async (req, res) => {
   console.log("final amount is", finalAmount)
 
      res.render("checkout2", {
-        amount: finalAmount+3000,
+        amount: finalAmount,
         couponValue:activatedCoupon.value,
         discount: amount*20/100,
         title: "Payment Page",
