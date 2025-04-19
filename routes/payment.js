@@ -113,7 +113,7 @@ async function processOrderPayment(req, res, finalAmount) {
         // Clear the cart and redirect to success page
         req.session.cart = null;
         req.flash("success_msg", "Order placed successfully with cash on delivery!");
-        return res.redirect("/success");
+        return res.redirect("/order-success");
       } catch (error) {
         console.error("Error posting order to external server:", error);
         req.flash("error_msg", "Order processing failed. Please try again.");
@@ -192,7 +192,7 @@ const template = couponValue > 0 ? "checkout2" : "checkout";
 
 // Render the appropriate checkout page
 res.render(template, {
-  amount,
+  amount:amount+3000,
   couponValue,
   discount: amount*20/100,
   title: "Payment Page",
@@ -340,9 +340,16 @@ router.post("/process", async (req, res) => {
 
       console.log("Updated activated coupon value.");
 
+  console.log(amount)
+  console.log("final amount is", finalAmount)
 
+     res.render("checkout2", {
+        amount: finalAmount+3000,
+        couponValue:activatedCoupon.value,
+        discount: amount*20/100,
+        title: "Payment Page",
+       });
 
-      return await processOrderPayment(req, res, finalAmount);
     }
 
   } catch (error) {

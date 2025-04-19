@@ -327,6 +327,12 @@ router.get("/logout", (req, res) => {
   req.flash("success_msg", "You have been logged out successfully.");
   res.redirect("/login");
 });
+// order Success
+// Success page route
+router.get("/order-success", (req, res) => {
+  res.render("order-success"); // Make sure you have success.ejs in your views folder
+});
+
 // Success page route
 router.get("/success", (req, res) => {
   res.render("success"); // Make sure you have success.ejs in your views folder
