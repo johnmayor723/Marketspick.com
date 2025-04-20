@@ -33,14 +33,15 @@ async function processOrderPayment(req, res, finalAmount) {
   try {
     const { name, address, mobile, email, ordernotes, paymentmethod } = req.body;
     const cart = req.session.cart;
-
+    const total = finalAmount + 3000;
+    const amount = 0.2 * total;
     const orderPayload = {
       name,
       address,
       mobile,
       email,
       ordernotes,
-      amount: finalAmount,
+      amount,
       paymentmethod,
       status: "processing", // Default order status
     };
@@ -52,14 +53,13 @@ async function processOrderPayment(req, res, finalAmount) {
       try {
         const addressPayload = {
           userId: id,
-          address: {
-            mobile: dataMobile,
+         mobile: dataMobile,
             hnumber: 1,
             street: dataAddress,
             city: "Lagos",
             state: "Lagos",
-          },
-        };
+          };
+        
         console.log("address payload:", addressPayload);
         const response = await axios.put(
           "https://api.foodliie.com/api/auth/update-address",
@@ -83,7 +83,7 @@ async function processOrderPayment(req, res, finalAmount) {
     const userEmailOptions = {
       from: '"Market Picks" <marketpicks723@gmail.com>',
       to: email,
-      subject: "Order Confirmation - FoodDeck",
+      subject: "Order Confirmation -",
       html: generateOrderEmailHTML(cart, orderPayload),
     };
 
@@ -112,7 +112,7 @@ async function processOrderPayment(req, res, finalAmount) {
 
         // Clear the cart and redirect to success page
         req.session.cart = null;
-        req.flash("success_msg", "Order placed successfully with cash on delivery!");
+        req.flash("success_msg", "Order placed successfully. Please make payment  on delivery!");
         return res.redirect("/order-success");
       } catch (error) {
         console.error("Error posting order to external server:", error);
@@ -271,7 +271,7 @@ router.post("/process", async (req, res) => {
       const updatedValue = activeCoupon.value - discountApplied;
       const isValid = updatedValue > 0;
 
-      await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
+     /* await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
         userId,
         couponId: activeCoupon.couponId,
         usedValue: discountApplied,
@@ -284,7 +284,7 @@ router.post("/process", async (req, res) => {
       await axios.patch(`${API_BASE_URL}/api/agent`, {
         couponCode: activeCoupon.couponCode,
         amount: finalAmount,
-      });
+      });*/
 
       return await processOrderPayment(req, res, finalAmount, userId);
     } 
