@@ -32,8 +32,11 @@ const transporter = nodemailer.createTransport({
 async function processOrderPayment(req, res, finalAmount) {
   try {
     const { name, address, mobile, email, ordernotes, paymentmethod } = req.body;
-    const cart = req.session.cart;
-
+   const cart = req.session.cart
+   const deliveryFee = 3000;
+   const subTotal = finalAmount + deliveryFee;
+   const discount = 0.20;
+   const total = Math.round(subTotal - (subTotal * discount));
     const orderPayload = {
       name,
       address,
