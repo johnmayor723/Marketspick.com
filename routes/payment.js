@@ -166,49 +166,60 @@ async function processOrderPayment(req, res, finalAmount) {
 
 router.post("/", async (req, res, next) => {
   const amount = req.body.amount;
-  console.log("here now:", req.session.currentUser)
+  console.log("here now:", req.session.currentUser);
 
+  // Check for unauthenticated user with a cart
   if (!req.session.currentUser && req.session.cart) {
     return res.render("homepage", { cart: [], title: "Homepage" });
   }
 
+  // If amount is less than ₦10,000, render alternative cart page
+  if (amount < 10000) {
+      let cart = req.session.cart
+    return res.render("cart-2", {
+      amount,
+      cart,
+      title: "Cart Minimum Requirement",
+      message: "Please increase items in cart to a minimum of ₦10,000.",
+    });
+  }
+
   try {
-    // Get the user ID from the session
-    const userId = req.session.currentUser.userId;
+    // Get user ID from session
+    const userId = req.session.currentUser?.userId;
 
-    // Check if the user is authenticated
     if (!userId) {
-      return res.status(401).render("login", { title: "Login Page", message: "Please log in to proceed to checkout." });
+      return res.status(401).render("login", {
+        title: "Login Page",
+        message: "Please log in to proceed to checkout.",
+      });
     }
-    console.log('making axios call to validare coupon')
 
-    // Make the Axios call to validate coupon
+    console.log("Making axios call to validate coupon");
+
+    // Call to validate coupon
     const { data } = await axios.post("https://api.foodliie.com/api/auth/validate-coupon", {
       userId,
     });
-    
-    const couponValue = data.coupon.value || 0; // Get coupon value, default to 0 if none is returned
-console.log("coupon value:", couponValue);
 
-// Determine the template to render
-const template = couponValue > 0 ? "checkout2" : "checkout";
+    const couponValue = data.coupon?.value || 0;
+    console.log("Coupon value:", couponValue);
 
-// Render the appropriate checkout page
-res.render(template, {
-  amount,
-  couponValue,
-  discount: amount*20/100,
-  title: "Payment Page",
-});
+    const template = couponValue > 0 ? "checkout2" : "checkout";
 
+    return res.render(template, {
+      amount,
+      couponValue,
+      discount: amount * 0.2,
+      title: "Payment Page",
+    });
 
   } catch (error) {
     console.error("Error validating coupon:", error.message);
 
-    // If an error occurs, render the checkout page without a coupon value
-    res.render("checkout", {
+    return res.render("checkout", {
       amount,
-      couponValue: 0, // Default coupon value to 0 in case of error
+      couponValue: 0,
       title: "Payment Page",
       error_msg: "Unable to validate coupon. Please try again later.",
     });
