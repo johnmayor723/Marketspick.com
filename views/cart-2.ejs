@@ -1,5 +1,17 @@
 
 
+<%
+    let shippingFee = 3000;
+    if (session.cart.totalAmount > 100000) {
+        shippingFee = 10000;
+    } else if (session.cart.totalAmount > 50000) {
+        shippingFee = 7000;
+    } else if (session.cart.totalAmount > 25000) {
+        shippingFee = 5000;
+    }
+    const totalWithShipping = session.cart.totalAmount + shippingFee;
+%>
+
 <!-- Single Page Header start -->
 <div class="container-fluid page-header py-5 mt-5">
     <h1 class="text-center text-white display-6">Cart</h1>
@@ -99,17 +111,17 @@
                         <div class="d-flex justify-content-between">
                             <h5 class="mb-0 me-4">Shipping</h5>
                             <div class="">
-                                <p class="mb-0">Flat rate: &#8358; 3000.00</p>
+                                <p class="mb-0">Flat rate: &#8358; <%= shippingFee %>.00</p>
                             </div>
                         </div>
                         <p class="mb-0 text-end">Shipping within Lagos.</p>
                     </div>
                     <div class="py-4 mb-4 border-top border-bottom d-flex justify-content-between">
                         <h5 class="mb-0 ps-4 me-4">Total</h5>
-                        <p class="mb-0 pe-4">&#8358; <%= session.cart.totalAmount + 3000 %>.00</p>
+                        <p class="mb-0 pe-4">&#8358; <%= totalWithShipping %>.00</p>
                     </div>
                     <form action="/payments" method="POST">
-                        <input type="hidden" value="<%= session.cart.totalAmount + 3000 %>" name="amount" />
+                        <input type="hidden" value="<%= totalWithShipping %>" name="amount" />
                         <button type="submit" class="btn border-secondary rounded-pill px-4 py-3 text-primary text-uppercase mb-4 ms-4">
                             Proceed Checkout
                         </button>
