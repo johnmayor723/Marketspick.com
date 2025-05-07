@@ -7,11 +7,21 @@ const mongoose = require('mongoose');
 const flash = require('connect-flash');
 
 const app = express();
-
+const couponCronJob =require('./api/config/cron');
 //Importing routes
 const indexRouter = require("./routes/index");
 const cartRouter = require("./routes/cart");
 const paymentRouter = require("./routes/payment");
+
+// Importing api routes
+
+const authRoutes = require("./api/routes/auth");
+const productRoutes = require("./api/routes/productRoutes");
+const orderRoutes = require("./api/routes/orderRoutes");
+const cartRoutes = require("./api/routes/cartRoutes");
+const categoryRoutes = require("./api/routes/categoryRoutes");
+const agentRoutes = require("./api/routes/agentRoutes");
+
 
 // MongoDB Connection URL
 const DBURL = "mongodb+srv://Pantryhubadmin:pantryhub123@cluster0.qjbxk.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
@@ -66,11 +76,26 @@ app.use((req, res, next) => {
 mongoose.connect(DBURL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
     console.log('Connected to MongoDB');
+//Start cron job
+couponCronJob()
+
+
 
 // Define routes after establishing connection
+
+//api route
+app.use('/api/auth', authRoutes);
+app.use('/api/products', productRoutes);
+app.use('/api/orders', orderRoutes);
+app.use('/api/cart', cartRoutes);
+app.use('/api/categories', categoryRoutes);
+app.use('/api/agents', agentRoutes);
+
+// client routes
 app.use("/", indexRouter);
 app.use("/cart", cartRouter);
 app.use("/payments", paymentRouter); 
+
 
 // Start the server
 const PORT = process.env.PORT || 3010;
