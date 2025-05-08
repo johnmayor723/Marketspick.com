@@ -269,7 +269,133 @@ router.post("/process", async (req, res) => {
     if (!activeCoupon && !discountCode) {
       // Case 1: No active coupon and no discount code → Proceed with full payment
       console.log("No active coupon and no discount code. Proceeding with full payment.");
+      res.render("checkout3", {amount})
+     /* return await processOrderPayment(req, res, finalAmount, userId);*/
+    } 
+    else if (activeCoupon) {
+      // Case 2: User already has an active coupon → Apply discount
+      console.log("Active coupon found:", activeCoupon);
+
+      const maxDiscount = finalAmount * 0.2; // Max 20% discount
+      const discountApplied = Math.min(activeCoupon.value, maxDiscount);
+      finalAmount -= discountApplied;
+
+      console.log(`Applying discount: ${discountApplied}, Final amount after discount: ${finalAmount}`);
+
+      // Update coupon value
+      const updatedValue = activeCoupon.value - discountApplied;
+      const isValid = updatedValue > 0;
+
+      await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
+        userId,
+        couponId: activeCoupon.couponId,
+        usedValue: discountApplied,
+        
+      });
+
+      console.log("Coupon updated successfully.");
+
+      // Update agent sales
+      await axios.patch(`${API_BASE_URL}/api/agent`, {
+        couponCode: activeCoupon.couponCode,
+        amount: finalAmount,
+      });
+
       return await processOrderPayment(req, res, finalAmount, userId);
+    } 
+    else {
+      // Case 3: No active coupon, but discountCode is provided → Verify and activate
+      console.log("No active coupon, verifying discount code:", discountCode);
+
+      const verifyResponse = await axios.post("https://api.foodliie.com/api/agent/verify-couponCode", {
+        couponCode: discountCode,
+      });
+
+      console.log("Discount code verification response:", verifyResponse.data);
+
+      if (!verifyResponse.data?.couponCode) {
+        console.log("Invalid discount code. Proceeding with full payment.");
+        return await processOrderPayment(req, res, finalAmount, userId);
+      }
+
+      console.log("Valid discount code. Activating for user.");
+
+      // Activate coupon for user
+      const activateResponse = await axios.post(`${API_BASE_URL}/api/auth/activate-coupon`, {
+        couponCode: discountCode,
+        userId,
+      });
+
+      console.log("Coupon activation response:", activateResponse.data);
+
+      if (!activateResponse.data?.coupon) {
+        req.flash("error_msg", "Coupon activation failed.");
+        return res.redirect("/cart");
+      }
+
+      const activatedCoupon = activateResponse.data.coupon;
+
+      // Apply discount
+      const maxDiscount = finalAmount * 0.2;
+      const discountApplied = Math.min(activatedCoupon.value, maxDiscount);
+      finalAmount -= discountApplied;
+
+      console.log(`Activated coupon applied: ${discountApplied}, Final amount: ${finalAmount}`);
+
+      // Update coupon value
+      const updatedValue = activatedCoupon.value - discountApplied;
+      const isValid = updatedValue > 0;
+
+      await axios.put(`${API_BASE_URL}/api/auth/update-coupon`, {
+        userId,
+        couponId: activatedCoupon.couponId,
+        usedValue: discountApplied,
+        
+      });
+
+      console.log("Updated activated coupon value.");
+
+  console.log(amount)
+  console.log("final amount is", finalAmount)
+
+     res.render("checkout2", {
+        amount: finalAmount,
+        couponValue:activatedCoupon.value,
+        discount: amount*20/100,
+        title: "Payment Page",
+       });
+
+    }
+
+  } catch (error) {
+    console.error("Error processing payment:", error);
+    req.flash("error_msg", "Payment processing failed. Please try again.");
+    return res.redirect("/cart");
+  }
+});
+router.post("/process2", async (req, res) => {
+  try {
+    const { name, address, mobile, email, ordernotes, amount, paymentmethod, discountCode } = req.body;
+    const userId = req.session.currentUser.userId;
+    const cart = req.session.cart;
+
+    let finalAmount = amount; // Initialize finalAmount
+
+    console.log("Processing order for user:", userId);
+    console.log("Initial amount:", amount);
+    console.log("Discount code provided:", discountCode || "None");
+
+    // Step 1: Check for active coupon
+    const couponResponse = await axios.post('https://api.foodliie.com/api/auth/validate-coupon', { userId });
+    console.log("Coupon validation response:", couponResponse.data);
+
+    const activeCoupon = couponResponse.data?.coupon;
+
+    if (!activeCoupon && !discountCode) {
+      // Case 1: No active coupon and no discount code → Proceed with full payment
+      console.log("No active coupon and no discount code. Proceeding with full payment.");
+     // res.render("checkout3", {amount})
+     return await processOrderPayment(req, res, finalAmount, userId);
     } 
     else if (activeCoupon) {
       // Case 2: User already has an active coupon → Apply discount
